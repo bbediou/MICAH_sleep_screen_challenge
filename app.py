@@ -42,7 +42,7 @@ IDENTIFIER_COL = "Choisis ton code secret" # Example: "Email Address" or "Your S
 
 # The *exact* column names for the questions you want to plot
 # I've included one numerical and one categorical example
-NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il réparateur ?"
+NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il reparateur ?"
 CATEGORICAL_QUESTION_COL = "Combien d’heures passes-tu sur les écrans le soir ?"
 
 # --- (End of configuration) ---
@@ -57,6 +57,7 @@ def load_data(url):
     try:
         response = requests.get(url)
         response.raise_for_status()
+        response.encoding = 'utf-8'
         csv_data = io.StringIO(response.text)
         df = pd.read_csv(csv_data)
         return df
