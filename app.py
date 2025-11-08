@@ -42,9 +42,20 @@ IDENTIFIER_COL = "Choisis ton code secret" # Example: "Email Address" or "Your S
 
 # The *exact* column names for the questions you want to plot
 # I've included one numerical and one categorical example
-NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il réparateur ?"
-CATEGORICAL_QUESTION_COL = "Combien d’heures passes-tu sur les écrans le soir ?"
+#NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il réparateur ?"
+#CATEGORICAL_QUESTION_COL = "Combien d’heures passes-tu sur les écrans le soir ?"
+SCALE_QUESTIONS = [
+    "Sur une échelle de 1 à 5, comment te sens-tu ?",
+    "Note ton sommeil de 1 (mauvais) à 10 (parfait)",
+    "Combien d'heures d'écran par jour ?"
+]
 
+# Mettez TOUTES vos questions à choix/catégoriques ici
+CATEGORY_QUESTIONS = [
+    "Quelle est ta principale préoccupation ?",
+    "Ton outil préféré est :",
+    "Le matin, tu te sens :"
+]
 # --- (End of configuration) ---
 
 
@@ -168,49 +179,86 @@ st.markdown("---")
 # --- Affichage des résultats (AVEC ONGLETS) ---
 st.header("Tes réponses comparées aux autres")
 
-# Création des onglets
-tab_num, tab_cat = st.tabs(["Question 1 (Échelle)", "Question 2 (Choix)"])
+if user_data_row.empty:
+    st.error(f"**Code non trouvé :** Nous n'avons trouvé aucune réponse pour `{user_id}`. Vérifie bien le code.")
+    st.stop()
 
-with tab_num:
-    st.subheader(f"Analyse pour : {NUMERICAL_QUESTION_COL}")
-    try:
-        user_numerical_answer = user_data[NUMERICAL_QUESTION_COL]
-        
-        if pd.isna(user_numerical_answer):
-            st.warning("Tu n'as pas répondu à cette question.")
-        else:
-            numerical_chart = plot_numerical_comparison(
-                df=all_data,
-                question_col=NUMERICAL_QUESTION_COL,
-                classifier_col=CLASSIFIER_COL,
-                user_value=user_numerical_answer
-            )
-            st.altair_chart(numerical_chart, use_container_width=True)
-            st.markdown(f"La **ligne rouge** montre ta réponse : **{user_numerical_answer}**")
+user_data = user_data_row.iloc[0]
+user_classifier = user_data[CLASSIFIER_COL]
+
+st.success(f"**Bienvenue !** Nous avons trouvé tes réponses. Tu fais partie du groupe : **{user_classifier}**.")
+st.markdown("---")
+
+# --- AFFICHAGE DES RÉSULTATS (Refonte avec boucles) ---
+st.header("Tes réponses comparées aux autres")
+
+# --- Section 1: Questions à Échelle (Numériques / Ratings) ---
+st.subheader("📊 Questions à échelle (1-10)")
+
+if not SCALE_QUESTIONS:
+    st.info("Aucune question de type 'échelle' n'a été configurée.")
+else:
+    # Créer un onglet pour CHAQUE question numérique
+    num_tab_list = st.tabs([f"Question {i+1}" for i in range(len(SCALE_QUESTIONS))])
+    
+    for i, tab in enumerate(num_tab_list):
+        with tab:
+            q_col = SCALE_QUESTIONS[i]
+            st.markdown(f"**Question :** *{q_col}*")
             
-    except Exception as e:
-        st.error(f"Erreur d'affichage du graphique. Vérifiez les noms de colonnes. Erreur : {e}")
+            try:
+                user_answer = user_data[q_col]
+                if pd.isna(user_answer):
+                    st.warning("Tu n'as pas répondu à cette question.")
+                else:
+                    chart = plot_numerical_comparison(
+                        df=all_data,
+                        question_col=q_col,
+                        classifier_col=CLASSIFIER_COL,
+                        user_value=user_answer
+                    )
+                    st.altair_chart(chart, use_container_width=True)
+                    st.markdown(f"La **ligne rouge** montre ta réponse : **{user_answer}**")
+            except KeyError:
+                st.error(f"⚠️ Oups ! La colonne '{q_col}' n'a pas été trouvée. Vérifiez l'orthographe exacte dans votre liste `SCALE_QUESTIONS`.")
+            except Exception as e:
+                st.error(f"Erreur d'affichage : {e}")
 
-with tab_cat:
-    st.subheader(f"Analyse pour : {CATEGORICAL_QUESTION_COL}")
-    try:
-        user_categorical_answer = user_data[CATEGORICAL_QUESTION_COL]
-        
-        if pd.isna(user_categorical_answer):
-            st.warning("Tu n'as pas répondu à cette question.")
-        else:
-            categorical_chart = plot_categorical_comparison(
-                df=all_data,
-                question_col=CATEGORICAL_QUESTION_COL,
-                classifier_col=CLASSIFIER_COL,
-                user_value=user_categorical_answer
-            )
-            st.altair_chart(categorical_chart, use_container_width=True)
-            st.markdown(f"Ta réponse (**{user_categorical_answer}**) est affichée en **opaque**. Les autres sont estompées.")
+st.markdown("---")
+
+# --- Section 2: Questions à Choix (Catégoriques) ---
+st.subheader("📋 Questions à choix multiples")
+
+if not CATEGORY_QUESTIONS:
+    st.info("Aucune question de type 'choix' n'a été configurée.")
+else:
+    # Créer un onglet pour CHAQUE question catégorique
+    cat_tab_list = st.tabs([f"Question {i+1}" for i in range(len(CATEGORY_QUESTIONS))])
+    
+    for i, tab in enumerate(cat_tab_list):
+        with tab:
+            q_col = CATEGORY_QUESTIONS[i]
+            st.markdown(f"**Question :** *{q_col}*")
             
-    except Exception as e:
-        st.error(f"Erreur d'affichage du graphique. Vérifiez les noms de colonnes. Erreur : {e}")
+            try:
+                user_answer = user_data[q_col]
+                if pd.isna(user_answer):
+                    st.warning("Tu n'as pas répondu à cette question.")
+                else:
+                    chart = plot_categorical_comparison(
+                        df=all_data,
+                        question_col=q_col,
+                        classifier_col=CLASSIFIER_COL,
+                        user_value=user_answer
+                    )
+                    st.altair_chart(chart, use_container_width=True)
+                    st.markdown(f"Ta réponse (**{user_answer}**) est affichée en **opaque**. Les autres sont estompées.")
+            except KeyError:
+                st.error(f"⚠️ Oups ! La colonne '{q_col}' n'a pas été trouvée. Vérifiez l'orthographe exacte dans votre liste `CATEGORY_QUESTIONS`.")
+            except Exception as e:
+                st.error(f"Erreur d'affichage : {e}")
 
+                
 # --- Données brutes (Optionnel) ---
 st.markdown("---")
 if st.checkbox("Afficher toutes les données brutes (anonymisées)"):
