@@ -42,7 +42,7 @@ IDENTIFIER_COL = "Choisis ton code secret" # Example: "Email Address" or "Your S
 
 # The *exact* column names for the questions you want to plot
 # I've included one numerical and one categorical example
-NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il reparateur ?"
+NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il réparateur ?"
 CATEGORICAL_QUESTION_COL = "Combien d’heures passes-tu sur les écrans le soir ?"
 
 # --- (End of configuration) ---
