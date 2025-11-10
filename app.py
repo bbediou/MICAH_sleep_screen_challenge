@@ -30,21 +30,21 @@ GROUP_ICONS = {
     "professeur": "👩‍🏫"
 }
 
-# Consistent color scheme for groups
+# Vibrant color scheme inspired by Google Forms
 GROUP_COLORS = {
-    "adolescent": "#FF6B6B",  # Coral red
-    "ado": "#FF6B6B",
-    "teen": "#FF6B6B",
-    "parent": "#4ECDC4",      # Turquoise
-    "parents": "#4ECDC4",
-    "teacher": "#45B7D1",     # Sky blue
-    "enseignant": "#45B7D1",
-    "professeur": "#45B7D1"
+    "adolescent": "#4285F4",  # Google Blue
+    "ado": "#4285F4",
+    "teen": "#4285F4",
+    "parent": "#34A853",      # Google Green
+    "parents": "#34A853",
+    "teacher": "#EA4335",     # Google Red
+    "enseignant": "#EA4335",
+    "professeur": "#EA4335"
 }
 
 # Default icon and color for unknown groups
 DEFAULT_ICON = "👤"
-DEFAULT_COLOR = "#95A5A6"
+DEFAULT_COLOR = "#9E9E9E"
 
 def get_group_icon(group_name):
     """Get icon for a group, case-insensitive."""
@@ -176,7 +176,7 @@ SCALE_QUESTIONS = [
 
 CATEGORY_QUESTIONS = [
     "As tu des écrans dans ta chambre (smartphone compris) ?",
-    "Scénario – \"22 h 30\"",
+    'Scénario - "22 h 30"',  # Fixed encoding
     "Regardes-tu ton téléphone dès le réveil ?"
 ]
 
@@ -213,41 +213,42 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     cls_field = col_map.get(classifier_col, classifier_col)
 
     # Get user's group
-    user_group = df_plot[df_plot[col_map.get(classifier_col, classifier_col)] == user_data[classifier_col]].iloc[0][cls_field] if 'user_data' in globals() else None
+    user_group = user_data[classifier_col] if 'user_data' in globals() else None
 
     # Filter data based on show_other_groups option
     if not show_other_groups and user_group:
-        df_plot = df_plot[df_plot[cls_field] == user_group]
+        df_plot = df_plot[df_plot[classifier_col] == user_group]
 
     # Calculate statistics for context
     user_percentile = (df_plot[col_map.get(question_col, question_col)] <= user_value).mean() * 100
 
-    # Create a column to identify if the response matches user's value
-    df_plot['is_user_response'] = df_plot[q_field] == user_value
+    # Round values to integers for binning
+    df_plot['rounded_value'] = df_plot[q_field].round().astype(int)
     
     # Get color scale
     color_scale = get_color_scale(df_plot, cls_field)
 
-    # Enhanced histogram with integer bins and highlighting
-    base = alt.Chart(df_plot).transform_calculate(
-        bin_value=f"floor(datum.{q_field})"
-    ).mark_bar(
+    # Create aggregated data for histogram
+    histogram_data = df_plot.groupby(['rounded_value', cls_field]).size().reset_index(name='count')
+    
+    # Mark user's response
+    histogram_data['is_user_value'] = histogram_data['rounded_value'] == int(round(user_value))
+
+    # Enhanced histogram with proper stacking and colors
+    bars = alt.Chart(histogram_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
-        opacity=0.9
+        cornerRadiusTopRight=4
     ).encode(
-        x=alt.X('bin_value:Q', 
-                bin=alt.Bin(step=1),  # Integer bins with step=1
+        x=alt.X('rounded_value:O', 
                 title=question_col,
                 axis=alt.Axis(
                     labelAngle=0,
                     titleFontSize=14,
                     labelFontSize=12,
-                    grid=True,
-                    gridOpacity=0.3,
-                    format='d'  # Display as integers
+                    grid=False
                 )),
-        y=alt.Y('count()', 
+        y=alt.Y('count:Q', 
+                stack='zero',
                 title="Nombre de réponses",
                 axis=alt.Axis(
                     titleFontSize=14,
@@ -264,51 +265,51 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                            labelFontSize=11
                        )),
         opacity=alt.condition(
-            alt.datum.is_user_response,
+            alt.datum.is_user_value,
             alt.value(1.0),
-            alt.value(0.4)
+            alt.value(0.5)
         ),
         tooltip=[
-            alt.Tooltip('bin_value:Q', title=question_col, format='d'),
+            alt.Tooltip('rounded_value:O', title=question_col),
             alt.Tooltip(cls_field, type='nominal', title=classifier_col),
-            alt.Tooltip('count()', title='Nombre')
+            alt.Tooltip('count:Q', title='Nombre')
         ]
     )
 
-    # User's response highlight bar (overlaid)
-    user_bar = alt.Chart(df_plot[df_plot['is_user_response']]).transform_calculate(
-        bin_value=f"floor(datum.{q_field})"
-    ).mark_bar(
+    # Highlight border for user's value
+    user_highlight = alt.Chart(histogram_data[histogram_data['is_user_value']]).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4,
         stroke='#E53E3E',
-        strokeWidth=3
+        strokeWidth=3,
+        fillOpacity=0
     ).encode(
-        x=alt.X('bin_value:Q', bin=alt.Bin(step=1)),
-        y=alt.Y('count()'),
+        x=alt.X('rounded_value:O'),
+        y=alt.Y('count:Q', stack='zero'),
         color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
     
-    # Add text annotation for user's value
-    text = alt.Chart(pd.DataFrame({
-        'ma_reponse': [user_value],
-        'y_pos': [df_plot.shape[0] * 0.15],
-        'label': [f'Ta réponse: {int(user_value)}']
-    })).mark_text(
+    # Add arrow pointing to user's value
+    arrow_data = pd.DataFrame({
+        'x': [int(round(user_value))],
+        'y': [histogram_data[histogram_data['is_user_value']]['count'].sum() * 1.1],
+        'label': ['Ta réponse ↓']
+    })
+    
+    arrow = alt.Chart(arrow_data).mark_text(
         align='center',
         baseline='bottom',
-        dy=-5,
         fontSize=14,
         fontWeight='bold',
         color='#E53E3E'
     ).encode(
-        x='ma_reponse:Q',
-        y='y_pos:Q',
+        x='x:O',
+        y='y:Q',
         text='label:N'
     )
     
     # Combine all elements
-    chart = (base + user_bar + text).properties(
+    chart = (bars + user_highlight + arrow).properties(
         width='container',
         height=350,
         title={
@@ -323,6 +324,150 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     )
     
     return chart, user_percentile
+
+def is_yes_no_question(df, question_col):
+    """Check if a question is a yes/no type question."""
+    unique_values = df[question_col].dropna().unique()
+    yes_no_patterns = [
+        ['oui', 'non'],
+        ['yes', 'no'],
+        ['Oui', 'Non'],
+        ['OUI', 'NON']
+    ]
+    
+    # Check if values match yes/no patterns
+    values_lower = [str(v).lower().strip() for v in unique_values]
+    for pattern in yes_no_patterns:
+        if set(values_lower).issubset(set(pattern)):
+            return True
+    
+    # Also check if it's binary with only 2 values
+    return len(unique_values) == 2
+
+def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
+    """
+    Crée des graphiques en camembert pour les questions oui/non.
+    """
+    # Get user's group
+    user_group = user_data[classifier_col] if 'user_data' in globals() else None
+
+    # Filter data based on show_other_groups option
+    df_plot = df.copy()
+    if not show_other_groups and user_group:
+        df_plot = df_plot[df_plot[classifier_col] == user_group]
+
+    # Get unique groups for creating multiple pie charts
+    groups = sorted(df_plot[classifier_col].dropna().unique())
+    
+    # Create charts for each group
+    charts = []
+    
+    for i, group in enumerate(groups):
+        group_data = df_plot[df_plot[classifier_col] == group]
+        value_counts = group_data[question_col].value_counts()
+        
+        # Create data for this group's pie chart
+        pie_data = []
+        for value, count in value_counts.items():
+            pie_data.append({
+                'response': str(value),
+                'count': count,
+                'percentage': (count / len(group_data) * 100),
+                'is_user_response': value == user_value and group == user_group
+            })
+        
+        pie_df = pd.DataFrame(pie_data)
+        
+        # Determine colors for yes/no
+        response_colors = {}
+        for response in pie_df['response'].unique():
+            response_lower = response.lower().strip()
+            if response_lower in ['oui', 'yes']:
+                response_colors[response] = '#2ECC71'  # Green
+            elif response_lower in ['non', 'no']:
+                response_colors[response] = '#E74C3C'  # Red
+            else:
+                response_colors[response] = '#95A5A6'  # Gray for other
+        
+        # Create pie chart for this group
+        base = alt.Chart(pie_df).mark_arc(
+            innerRadius=40,
+            stroke='white',
+            strokeWidth=2
+        ).encode(
+            theta=alt.Theta('count:Q'),
+            color=alt.Color('response:N',
+                           scale=alt.Scale(
+                               domain=list(response_colors.keys()),
+                               range=list(response_colors.values())
+                           ),
+                           legend=None if i > 0 else alt.Legend(
+                               orient='bottom',
+                               title='Réponse'
+                           )),
+            opacity=alt.condition(
+                alt.datum.is_user_response,
+                alt.value(1.0),
+                alt.value(0.7)
+            ),
+            tooltip=[
+                alt.Tooltip('response:N', title='Réponse'),
+                alt.Tooltip('count:Q', title='Nombre'),
+                alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
+            ]
+        ).properties(
+            width=180,
+            height=180,
+            title={
+                "text": f"{get_group_icon(group)} {group}",
+                "color": get_group_color(group),
+                "fontSize": 14,
+                "fontWeight": "bold"
+            }
+        )
+        
+        # Add percentage labels
+        labels = alt.Chart(pie_df).mark_text(
+            radius=70,
+            fontSize=12,
+            fontWeight='bold',
+            color='white'
+        ).encode(
+            theta=alt.Theta('count:Q'),
+            text=alt.Text('percentage:Q', format='.0f')
+        )
+        
+        # Add response labels
+        response_labels = alt.Chart(pie_df).mark_text(
+            radius=100,
+            fontSize=11
+        ).encode(
+            theta=alt.Theta('count:Q'),
+            text='response:N'
+        )
+        
+        charts.append(base + labels + response_labels)
+    
+    # Combine charts horizontally
+    if len(charts) == 1:
+        final_chart = charts[0]
+    elif len(charts) == 2:
+        final_chart = alt.hconcat(*charts)
+    else:
+        # For 3 or more, arrange in rows
+        final_chart = alt.vconcat(
+            *[alt.hconcat(*charts[i:i+3]) for i in range(0, len(charts), 3)]
+        )
+    
+    return final_chart.properties(
+        title={
+            "text": f"Répartition des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
+            "fontSize": 16,
+            "anchor": "start"
+        }
+    ).configure_view(
+        strokeWidth=0
+    )
 
 def plot_categorical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
     """
@@ -517,32 +662,44 @@ if SCALE_QUESTIONS:
     st.markdown("### 📈 Questions sur une échelle (1-10)")
     
     for i, q_col in enumerate(SCALE_QUESTIONS):
+        # Try to find the question in the data with different encodings
+        actual_col = None
+        for col in all_data.columns:
+            if any(word in col for word in q_col.split()) and len([word for word in q_col.split() if word in col]) > 3:
+                actual_col = col
+                break
+        
+        if actual_col is None:
+            actual_col = q_col
+            
         with st.expander(f"📌 {q_col}", expanded=(i==0)):
             try:
-                user_answer = user_data[q_col]
+                user_answer = user_data[actual_col]
                 if pd.isna(user_answer):
                     st.warning("Tu n'as pas répondu à cette question.")
                 else:
                     chart, percentile = plot_numerical_comparison(
                         df=all_data,
-                        question_col=q_col,
+                        question_col=actual_col,
                         classifier_col=CLASSIFIER_COL,
                         user_value=user_answer,
                         show_other_groups=show_all_groups
                     )
                     st.altair_chart(chart, use_container_width=True)
                     
-                    # Add insight
+                    # Add insight with group colors
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.metric("Ta réponse", f"{user_answer}/10")
+                        st.metric("Ta réponse", f"{int(user_answer)}/10")
                     with col2:
                         st.metric("Position", f"{percentile:.0f}e percentile")
                     
+                    # Color-coded feedback
+                    group_color = get_group_color(user_classifier)
                     if percentile > 75:
-                        st.success("👍 Tu es dans le quart supérieur!")
+                        st.markdown(f'<div style="background: {group_color}20; padding: 10px; border-radius: 8px; border-left: 4px solid {group_color};">👍 <strong>Excellent!</strong> Tu es dans le quart supérieur!</div>', unsafe_allow_html=True)
                     elif percentile < 25:
-                        st.info("💭 Tu es dans le quart inférieur.")
+                        st.markdown(f'<div style="background: #FFF3CD; padding: 10px; border-radius: 8px; border-left: 4px solid #FFC107;">💭 <strong>Attention:</strong> Tu es dans le quart inférieur.</div>', unsafe_allow_html=True)
                         
             except Exception as e:
                 st.error(f"Erreur: {e}")
@@ -553,27 +710,60 @@ if CATEGORY_QUESTIONS:
     st.markdown("### 📋 Questions à choix")
     
     for i, q_col in enumerate(CATEGORY_QUESTIONS):
+        # Try to find the question in the data with different encodings
+        actual_col = None
+        for col in all_data.columns:
+            if 'Scénario' in col and '22 h 30' in col:
+                actual_col = col
+                break
+            elif q_col in col or col in q_col:
+                actual_col = col
+                break
+        
+        if actual_col is None:
+            actual_col = q_col
+        
         with st.expander(f"📌 {q_col}", expanded=(i==0)):
             try:
-                user_answer = user_data[q_col]
+                user_answer = user_data[actual_col]
                 if pd.isna(user_answer):
                     st.warning("Tu n'as pas répondu à cette question.")
                 else:
-                    chart = plot_categorical_comparison(
-                        df=all_data,
-                        question_col=q_col,
-                        classifier_col=CLASSIFIER_COL,
-                        user_value=user_answer,
-                        show_other_groups=show_all_groups
-                    )
+                    # Check if it's a yes/no question
+                    if is_yes_no_question(all_data, actual_col):
+                        # Use pie charts for yes/no questions
+                        chart = plot_pie_comparison(
+                            df=all_data,
+                            question_col=actual_col,
+                            classifier_col=CLASSIFIER_COL,
+                            user_value=user_answer,
+                            show_other_groups=show_all_groups
+                        )
+                    else:
+                        # Use bar charts for other categorical questions
+                        chart = plot_categorical_comparison(
+                            df=all_data,
+                            question_col=actual_col,
+                            classifier_col=CLASSIFIER_COL,
+                            user_value=user_answer,
+                            show_other_groups=show_all_groups
+                        )
+                    
                     st.altair_chart(chart, use_container_width=True)
                     
                     # Show user's answer prominently
-                    st.info(f"🎯 **Ta réponse:** {user_answer}")
+                    group_icon = get_group_icon(user_classifier)
+                    group_color = get_group_color(user_classifier)
+                    st.markdown(f"""
+                    <div style="background: {group_color}20; padding: 15px; border-radius: 8px; border-left: 4px solid {group_color};">
+                        <span style="font-size: 1.5em;">{group_icon}</span>
+                        <strong style="color: {group_color};">Ta réponse:</strong> {user_answer}
+                    </div>
+                    """, unsafe_allow_html=True)
                     
                     # Calculate how many people gave the same answer
-                    same_answer = all_data[all_data[q_col] == user_answer].shape[0]
-                    total = all_data[q_col].notna().sum()
+                    same_answer = all_data[all_data[actual_col] == user_answer].shape[0]
+                    total = all_data[actual_col].notna().sum()
                     percentage = (same_answer / total * 100) if total > 0 else 0
                     
                     st.markdown(f"*{same_answer} personnes ({percentage:.0f}%) ont donné la même réponse*")
