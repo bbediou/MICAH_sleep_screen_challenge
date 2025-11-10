@@ -245,6 +245,7 @@ def load_data(url):
         return pd.DataFrame()
 
 # --- ENHANCED PLOTTING FUNCTIONS ---
+# --- ENHANCED PLOTTING FUNCTIONS ---
 
 def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
@@ -274,7 +275,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     # Round values to integers for binning
     df_plot['rounded_value'] = df_plot[q_field].round().astype(int)
     
-    # Get color scale
+    # Get color scale - IMPORTANT: this must be used in encode()
     color_scale = get_color_scale(df_plot, cls_field)
 
     # Create aggregated data for histogram
@@ -283,21 +284,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     # Mark user's response
     histogram_data['is_user_value'] = histogram_data['rounded_value'] == int(round(user_value))
 
-    # Choose color encoding
-    if color_by_group:
-        color_encoding = alt.Color(f"{cls_field}:N", 
-                                   title="Type de répondant",
-                                   scale=color_scale,
-                                   legend=alt.Legend(
-                                       orient='bottom',
-                                       titleFontSize=12,
-                                       labelFontSize=11
-                                   ))
-    else:
-        fill_color = get_group_color(user_group) if user_group is not None else DEFAULT_COLOR
-        color_encoding = alt.value(fill_color)
-
-    # Dodged histogram bars
+    # Dodged histogram bars with proper group coloring
     bars = alt.Chart(histogram_data).mark_bar(
         cornerRadiusTopLeft=6,
         cornerRadiusTopRight=6,
@@ -320,7 +307,15 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                     grid=True,
                     gridOpacity=0.3
                 )),
-        color=color_encoding,
+        # ALWAYS use group colors for fill - this ensures bars are colored by group
+        color=alt.Color(f"{cls_field}:N", 
+                       title="Type de répondant",
+                       scale=color_scale,
+                       legend=alt.Legend(
+                           orient='bottom',
+                           titleFontSize=12,
+                           labelFontSize=11
+                       ) if color_by_group else None),
         xOffset=f"{cls_field}:N",
         opacity=alt.condition(
             alt.datum.is_user_value,
@@ -334,12 +329,12 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         ]
     )
 
-    # Highlight border for user's value
+    # Highlight border for user's value - use thicker, more visible stroke
     user_highlight = alt.Chart(histogram_data[histogram_data['is_user_value']]).mark_bar(
         cornerRadiusTopLeft=6,
         cornerRadiusTopRight=6,
-        stroke='#E53E3E',
-        strokeWidth=3,
+        stroke='#FF0000',
+        strokeWidth=4,
         fillOpacity=0
     ).encode(
         x=alt.X('rounded_value:O'),
@@ -348,9 +343,10 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     )
     
     # Add arrow pointing to user's value
+    max_count = histogram_data[histogram_data['is_user_value']]['count'].max() if not histogram_data[histogram_data['is_user_value']].empty else 0
     arrow_data = pd.DataFrame({
         'x': [int(round(user_value))],
-        'y': [histogram_data[histogram_data['is_user_value']]['count'].max() * 1.15],
+        'y': [max_count * 1.15 if max_count > 0 else 1],
         'label': ['Ta réponse ↓']
     })
     
@@ -359,7 +355,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         baseline='bottom',
         fontSize=14,
         fontWeight='bold',
-        color='#E53E3E'
+        color='#FF0000'
     ).encode(
         x='x:O',
         y='y:Q',
@@ -644,6 +640,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
     )
     
     return final_chart
+
 
 # --- MAIN APPLICATION ---
 
