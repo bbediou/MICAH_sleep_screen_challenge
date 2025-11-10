@@ -218,6 +218,9 @@ SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQDPet7-hUdVO0-C
 CLASSIFIER_COL = "Tu es :"
 IDENTIFIER_COL = "Choisis ton code secret"
 
+# Clean the classifier column
+all_data[CLASSIFIER_COL] = all_data[CLASSIFIER_COL].str.strip().str.lower()
+
 SCALE_QUESTIONS = [
     "A quel point ton sommeil est-il réparateur ?",
     "Quelle est la qualité de ton sommeil ?"
@@ -245,7 +248,12 @@ def load_data(url):
         return pd.DataFrame()
 
 # --- ENHANCED PLOTTING FUNCTIONS ---
-# --- ENHANCED PLOTTING FUNCTIONS ---
+
+# Add this before the plot call to diagnose
+st.write("Debug - Unique groups in data:", all_data[CLASSIFIER_COL].unique())
+st.write("Debug - Group counts:", all_data[CLASSIFIER_COL].value_counts())
+test_q = actual_col
+st.write("Debug - Sample data:", all_data[[test_q, CLASSIFIER_COL]].head(10))
 
 def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
