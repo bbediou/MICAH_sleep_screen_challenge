@@ -18,6 +18,60 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# Group icons and colors mapping
+GROUP_ICONS = {
+    "adolescent": "👦",
+    "ado": "👦", 
+    "teen": "👦",
+    "parent": "👨‍👩‍👧",
+    "parents": "👨‍👩‍👧",
+    "teacher": "👩‍🏫",
+    "enseignant": "👩‍🏫",
+    "professeur": "👩‍🏫"
+}
+
+# Consistent color scheme for groups
+GROUP_COLORS = {
+    "adolescent": "#FF6B6B",  # Coral red
+    "ado": "#FF6B6B",
+    "teen": "#FF6B6B",
+    "parent": "#4ECDC4",      # Turquoise
+    "parents": "#4ECDC4",
+    "teacher": "#45B7D1",     # Sky blue
+    "enseignant": "#45B7D1",
+    "professeur": "#45B7D1"
+}
+
+# Default icon and color for unknown groups
+DEFAULT_ICON = "👤"
+DEFAULT_COLOR = "#95A5A6"
+
+def get_group_icon(group_name):
+    """Get icon for a group, case-insensitive."""
+    if pd.isna(group_name):
+        return DEFAULT_ICON
+    group_lower = str(group_name).lower().strip()
+    return GROUP_ICONS.get(group_lower, DEFAULT_ICON)
+
+def get_group_color(group_name):
+    """Get color for a group, case-insensitive."""
+    if pd.isna(group_name):
+        return DEFAULT_COLOR
+    group_lower = str(group_name).lower().strip()
+    return GROUP_COLORS.get(group_lower, DEFAULT_COLOR)
+
+def get_color_scale(df, classifier_col):
+    """Create a color scale mapping for the groups in the dataframe."""
+    unique_groups = df[classifier_col].dropna().unique()
+    domain = []
+    range_colors = []
+    
+    for group in unique_groups:
+        domain.append(group)
+        range_colors.append(get_group_color(group))
+    
+    return alt.Scale(domain=domain, range=range_colors)
+
 # Custom CSS for mobile optimization and better styling
 st.markdown("""
 <style>
@@ -126,10 +180,6 @@ CATEGORY_QUESTIONS = [
     "Regardes-tu ton téléphone dès le réveil ?"
 ]
 
-# Color schemes
-COLOR_SCHEME_SCALE = ['#3366CC', '#DC3912', '#FF9900', '#109618']
-COLOR_SCHEME_CATEGORY = ['#4285F4', '#EA4335', '#FBBC04', '#34A853']
-
 # --- DATA LOADING ---
 @st.cache_data(ttl=300)
 def load_data(url):
@@ -147,9 +197,10 @@ def load_data(url):
 
 # --- ENHANCED PLOTTING FUNCTIONS ---
 
-def plot_numerical_comparison(df, question_col, classifier_col, user_value):
+def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
     """
     Crée un histogramme amélioré avec un design moderne et mobile-friendly.
+    Utilise des bins entiers et met en évidence la réponse de l'utilisateur.
     """
     # Prepare safe column names for Altair
     df_plot = df.copy()
@@ -161,24 +212,40 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value):
     q_field = col_map.get(question_col, question_col)
     cls_field = col_map.get(classifier_col, classifier_col)
 
+    # Get user's group
+    user_group = df_plot[df_plot[col_map.get(classifier_col, classifier_col)] == user_data[classifier_col]].iloc[0][cls_field] if 'user_data' in globals() else None
+
+    # Filter data based on show_other_groups option
+    if not show_other_groups and user_group:
+        df_plot = df_plot[df_plot[cls_field] == user_group]
+
     # Calculate statistics for context
     user_percentile = (df_plot[col_map.get(question_col, question_col)] <= user_value).mean() * 100
 
-    # Enhanced histogram with better styling
-    base = alt.Chart(df_plot).mark_bar(
+    # Create a column to identify if the response matches user's value
+    df_plot['is_user_response'] = df_plot[q_field] == user_value
+    
+    # Get color scale
+    color_scale = get_color_scale(df_plot, cls_field)
+
+    # Enhanced histogram with integer bins and highlighting
+    base = alt.Chart(df_plot).transform_calculate(
+        bin_value=f"floor(datum.{q_field})"
+    ).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4,
-        opacity=0.8
+        opacity=0.9
     ).encode(
-        x=alt.X(f"{q_field}:Q", 
-                bin=alt.Bin(maxbins=10),
+        x=alt.X('bin_value:Q', 
+                bin=alt.Bin(step=1),  # Integer bins with step=1
                 title=question_col,
                 axis=alt.Axis(
                     labelAngle=0,
                     titleFontSize=14,
                     labelFontSize=12,
                     grid=True,
-                    gridOpacity=0.3
+                    gridOpacity=0.3,
+                    format='d'  # Display as integers
                 )),
         y=alt.Y('count()', 
                 title="Nombre de réponses",
@@ -190,38 +257,48 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value):
                 )),
         color=alt.Color(f"{cls_field}:N", 
                        title="Type de répondant",
-                       scale=alt.Scale(scheme='tableau10'),
+                       scale=color_scale,
                        legend=alt.Legend(
                            orient='bottom',
                            titleFontSize=12,
                            labelFontSize=11
                        )),
+        opacity=alt.condition(
+            alt.datum.is_user_response,
+            alt.value(1.0),
+            alt.value(0.4)
+        ),
         tooltip=[
-            alt.Tooltip(q_field, type='quantitative', title=question_col),
+            alt.Tooltip('bin_value:Q', title=question_col, format='d'),
             alt.Tooltip(cls_field, type='nominal', title=classifier_col),
             alt.Tooltip('count()', title='Nombre')
         ]
     )
 
-    # User's response line with enhanced visibility
-    rule = alt.Chart(pd.DataFrame({'ma_reponse': [user_value]})).mark_rule(
-        color='#E53E3E',
-        strokeWidth=3,
-        strokeDash=[5, 5]
+    # User's response highlight bar (overlaid)
+    user_bar = alt.Chart(df_plot[df_plot['is_user_response']]).transform_calculate(
+        bin_value=f"floor(datum.{q_field})"
+    ).mark_bar(
+        cornerRadiusTopLeft=4,
+        cornerRadiusTopRight=4,
+        stroke='#E53E3E',
+        strokeWidth=3
     ).encode(
-        x='ma_reponse:Q'
+        x=alt.X('bin_value:Q', bin=alt.Bin(step=1)),
+        y=alt.Y('count()'),
+        color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
     
     # Add text annotation for user's value
     text = alt.Chart(pd.DataFrame({
         'ma_reponse': [user_value],
-        'y_pos': [df_plot.shape[0] * 0.1],
-        'label': [f'Ta réponse: {user_value}']
+        'y_pos': [df_plot.shape[0] * 0.15],
+        'label': [f'Ta réponse: {int(user_value)}']
     })).mark_text(
         align='center',
         baseline='bottom',
         dy=-5,
-        fontSize=12,
+        fontSize=14,
         fontWeight='bold',
         color='#E53E3E'
     ).encode(
@@ -231,11 +308,11 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value):
     )
     
     # Combine all elements
-    chart = (base + rule + text).properties(
+    chart = (base + user_bar + text).properties(
         width='container',
-        height=300,
+        height=350,
         title={
-            "text": f"Distribution des réponses",
+            "text": f"Distribution des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
             "fontSize": 16,
             "anchor": "start"
         }
@@ -247,7 +324,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value):
     
     return chart, user_percentile
 
-def plot_categorical_comparison(df, question_col, classifier_col, user_value):
+def plot_categorical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
     """
     Crée un graphique à barres amélioré pour les catégories.
     """
@@ -261,13 +338,26 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value):
     q_field = col_map.get(question_col, question_col)
     cls_field = col_map.get(classifier_col, classifier_col)
 
+    # Get user's group
+    user_group = df_plot[df_plot[col_map.get(classifier_col, classifier_col)] == user_data[classifier_col]].iloc[0][cls_field] if 'user_data' in globals() else None
+
+    # Filter data based on show_other_groups option
+    if not show_other_groups and user_group:
+        df_plot = df_plot[df_plot[cls_field] == user_group]
+
     # Calculate percentage for each category
     grouped = df_plot.groupby([q_field, cls_field]).size().reset_index(name='count')
     total = grouped.groupby(q_field)['count'].transform('sum')
     grouped['percentage'] = (grouped['count'] / total * 100).round(1)
+    
+    # Mark user's response
+    grouped['is_user_response'] = grouped[q_field] == user_value
+    
+    # Get color scale
+    color_scale = get_color_scale(df_plot, cls_field)
 
     # Enhanced bar chart
-    chart = alt.Chart(grouped).mark_bar(
+    bars = alt.Chart(grouped).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4
     ).encode(
@@ -288,14 +378,14 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value):
                 )),
         color=alt.Color(f"{cls_field}:N", 
                        title="Type de répondant",
-                       scale=alt.Scale(scheme='category10'),
+                       scale=color_scale,
                        legend=alt.Legend(
                            orient='bottom',
                            titleFontSize=12,
                            labelFontSize=11
                        )),
         opacity=alt.condition(
-            alt.datum[q_field] == user_value,
+            alt.datum.is_user_response,
             alt.value(1.0),
             alt.value(0.4)
         ),
@@ -305,6 +395,19 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value):
             alt.Tooltip('count:Q', title='Nombre'),
             alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
         ]
+    )
+    
+    # Highlight border for user's response
+    user_bars = alt.Chart(grouped[grouped['is_user_response']]).mark_bar(
+        cornerRadiusTopLeft=4,
+        cornerRadiusTopRight=4,
+        stroke='#E53E3E',
+        strokeWidth=3,
+        fillOpacity=0
+    ).encode(
+        x=alt.X(f"{q_field}:N"),
+        y=alt.Y('count:Q', stack='zero'),
+        color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
     
     # Add percentage labels on bars
@@ -318,17 +421,17 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value):
         text=alt.Text('percentage:Q', format='.0f'),
         color=alt.value('white'),
         opacity=alt.condition(
-            alt.datum[q_field] == user_value,
+            alt.datum.is_user_response,
             alt.value(1.0),
             alt.value(0)
         )
     )
     
-    final_chart = (chart + text).properties(
+    final_chart = (bars + user_bars + text).properties(
         width='container',
         height=350,
         title={
-            "text": f"Répartition des réponses par groupe",
+            "text": f"Répartition des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
             "fontSize": 16,
             "anchor": "start"
         }
@@ -382,18 +485,32 @@ if user_data_row.empty:
 user_data = user_data_row.iloc[0]
 user_classifier = user_data[CLASSIFIER_COL]
 
-# Success message with custom styling
+# Success message with custom styling and group icon
+group_icon = get_group_icon(user_classifier)
+group_color = get_group_color(user_classifier)
+
 st.markdown(f"""
-<div class="metric-card">
+<div class="metric-card" style="border-left: 4px solid {group_color};">
     <h3>✨ Bienvenue!</h3>
     <p>Nous avons trouvé tes réponses.</p>
-    <p><strong>Tu fais partie du groupe:</strong> <span style="color: #4A90E2; font-size: 1.2em;">{user_classifier}</span></p>
+    <p><strong>Tu fais partie du groupe:</strong> 
+        <span style="color: {group_color}; font-size: 1.5em;">{group_icon} {user_classifier}</span>
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
 # Results section
 st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
 st.markdown("## 📊 Tes réponses en détail")
+
+# Add toggle for showing all groups vs just user's group
+col1, col2 = st.columns([2, 1])
+with col1:
+    show_all_groups = st.toggle(
+        "Comparer avec tous les groupes",
+        value=True,
+        help="Active pour voir toutes les réponses, désactive pour voir seulement ton groupe"
+    )
 
 # Scale questions section
 if SCALE_QUESTIONS:
@@ -410,7 +527,8 @@ if SCALE_QUESTIONS:
                         df=all_data,
                         question_col=q_col,
                         classifier_col=CLASSIFIER_COL,
-                        user_value=user_answer
+                        user_value=user_answer,
+                        show_other_groups=show_all_groups
                     )
                     st.altair_chart(chart, use_container_width=True)
                     
@@ -445,7 +563,8 @@ if CATEGORY_QUESTIONS:
                         df=all_data,
                         question_col=q_col,
                         classifier_col=CLASSIFIER_COL,
-                        user_value=user_answer
+                        user_value=user_answer,
+                        show_other_groups=show_all_groups
                     )
                     st.altair_chart(chart, use_container_width=True)
                     
@@ -462,7 +581,7 @@ if CATEGORY_QUESTIONS:
             except Exception as e:
                 st.error(f"Erreur: {e}")
 
-# Summary statistics
+# Summary statistics with group breakdown
 st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
 with st.expander("📊 Statistiques globales"):
     col1, col2, col3 = st.columns(3)
@@ -472,6 +591,20 @@ with st.expander("📊 Statistiques globales"):
         st.metric("Groupes", all_data[CLASSIFIER_COL].nunique())
     with col3:
         st.metric("Questions", len(SCALE_QUESTIONS) + len(CATEGORY_QUESTIONS))
+    
+    # Group breakdown
+    st.markdown("### Répartition par groupe:")
+    group_counts = all_data[CLASSIFIER_COL].value_counts()
+    for group, count in group_counts.items():
+        icon = get_group_icon(group)
+        color = get_group_color(group)
+        percentage = (count / all_data.shape[0] * 100)
+        st.markdown(f"""
+        <div style="display: flex; align-items: center; margin: 0.5rem 0;">
+            <span style="color: {color}; font-size: 1.5em; margin-right: 0.5rem;">{icon}</span>
+            <span style="flex: 1;"><strong>{group}:</strong> {count} participants ({percentage:.1f}%)</span>
+        </div>
+        """, unsafe_allow_html=True)
 
 # Raw data (optional)
 if st.checkbox("🔍 Voir les données brutes (anonymisées)"):
