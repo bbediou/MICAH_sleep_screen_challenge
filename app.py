@@ -45,7 +45,7 @@ SCALE_QUESTIONS = [
 # Mettez TOUTES vos questions à choix/catégoriques ici
 CATEGORY_QUESTIONS = [
     "As tu des écrans dans ta chambre (smartphone compris) ?",
-    "C’est 22 h 30. Tu viens de recevoir une notification. Que fais-tu ?",
+    "Scénario — “22 h 30",
     "Regardes-tu ton téléphone dès le réveil ?"
 ]
 # --- (End of configuration) ---
