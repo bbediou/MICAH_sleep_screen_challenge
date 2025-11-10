@@ -842,8 +842,9 @@ if CATEGORY_QUESTIONS:
                             user_value=user_answer,
                             show_other_groups=show_all_groups
                         )
+                        st.altair_chart(chart, use_container_width=True)
                     else:
-                        # Use bar charts for other categorical questions
+                        # Use bar charts for other categorical questions and also show a pie summary
                         chart = plot_categorical_comparison(
                             df=all_data,
                             question_col=actual_col,
@@ -852,8 +853,27 @@ if CATEGORY_QUESTIONS:
                             show_other_groups=show_all_groups,
                             color_by_group=show_color_by_group
                         )
-                    
-                    st.altair_chart(chart, use_container_width=True)
+
+                        # Create a small pie chart summary of the overall distribution for this question
+                        counts = all_data[actual_col].dropna().astype(str).value_counts().reset_index()
+                        counts.columns = ['response', 'count']
+                        try:
+                            pie = alt.Chart(counts).mark_arc(innerRadius=40, stroke='white').encode(
+                                theta=alt.Theta('count:Q'),
+                                color=alt.Color('response:N', legend=alt.Legend(orient='bottom')),
+                                tooltip=[alt.Tooltip('response:N', title='Réponse'), alt.Tooltip('count:Q', title='Nombre')]
+                            ).properties(width=250, height=250)
+                        except Exception:
+                            pie = None
+
+                        if pie is not None:
+                            left, right = st.columns([3,1])
+                            with left:
+                                st.altair_chart(chart, use_container_width=True)
+                            with right:
+                                st.altair_chart(pie, use_container_width=True)
+                        else:
+                            st.altair_chart(chart, use_container_width=True)
                     
                     # Show user's answer prominently
                     group_icon = get_group_icon(user_classifier)
