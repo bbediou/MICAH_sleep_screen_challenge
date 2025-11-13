@@ -339,17 +339,17 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     )
 
     # Highlight border for user's value - use thicker, more visible stroke
-    user_highlight = alt.Chart(histogram_data[histogram_data['is_user_value']]).mark_bar(
-        cornerRadiusTopLeft=6,
-        cornerRadiusTopRight=6,
-        stroke='#FF0000',
-        strokeWidth=4,
-        fillOpacity=0
-    ).encode(
-        x=alt.X('rounded_value:O'),
-        y=alt.Y('count:Q', stack=None),
-        xOffset=f"{cls_field}:N"
-    )
+    # user_highlight = alt.Chart(histogram_data[histogram_data['is_user_value']]).mark_bar(
+    #     cornerRadiusTopLeft=6,
+    #     cornerRadiusTopRight=6,
+    #     stroke='#FF0000',
+    #     strokeWidth=4,
+    #     fillOpacity=0
+    # ).encode(
+    #     x=alt.X('rounded_value:O'),
+    #     y=alt.Y('count:Q', stack=None),
+    #     xOffset=f"{cls_field}:N"
+    # )
     
     # Add arrow pointing to user's value
     max_count = histogram_data[histogram_data['is_user_value']]['count'].max() if not histogram_data[histogram_data['is_user_value']].empty else 0
@@ -372,7 +372,8 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     )
     
     # Combine all elements
-    chart = (bars + user_highlight + arrow).properties(
+    #chart = (bars + user_highlight + arrow).properties(
+    chart = (bars).properties(
         width='container',
         height=350,
         title={
@@ -651,7 +652,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
     return final_chart
 
 
-# --- MAIN APPLICATION ---
+### --- MAIN APPLICATION --- ###
 
 # Header with emoji and styling
 st.markdown("# 🌙 Ton Bilan Sommeil")
@@ -771,122 +772,122 @@ if SCALE_QUESTIONS:
                 st.error(f"Erreur: {e}")
 
 # Categorical questions section
-if CATEGORY_QUESTIONS:
-    st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
-    st.markdown("### 📋 Questions à choix")
-    
-    for i, q_col in enumerate(CATEGORY_QUESTIONS):
-        # Find the best matching column for the question
-        actual_col = find_best_column(all_data.columns, q_col)
-
-        # Special handling for the scenario question which may have different spacing/format
-        if actual_col is None and 'scénario' in q_col.lower():
-            actual_col = next((col for col in all_data.columns if 'scénario' in col.lower() and '22' in col.lower()), None)
-
-        if actual_col is None:
-            actual_col = q_col if q_col in all_data.columns else q_col
-        
-        with st.expander(f"📌 {q_col}", expanded=(i==0)):
-            try:
-                user_answer = user_data[actual_col]
-                if pd.isna(user_answer):
-                    st.warning("Tu n'as pas répondu à cette question.")
-                else:
-                    # Check if it's a yes/no question
-                    if is_yes_no_question(all_data, actual_col):
-                        # Use pie charts for yes/no questions
-                        chart = plot_pie_comparison(
-                            df=all_data,
-                            question_col=actual_col,
-                            classifier_col=CLASSIFIER_COL,
-                            user_value=user_answer,
-                            show_other_groups=show_all_groups
-                        )
-                        st.altair_chart(chart, use_container_width=True)
-                    else:
-                        # Use bar charts for other categorical questions and also show a pie summary
-                        chart = plot_categorical_comparison(
-                            df=all_data,
-                            question_col=actual_col,
-                            classifier_col=CLASSIFIER_COL,
-                            user_value=user_answer,
-                            show_other_groups=show_all_groups,
-                            color_by_group=show_color_by_group
-                        )
-
-                        # Create a small pie chart summary of the overall distribution for this question
-                        counts = all_data[actual_col].dropna().astype(str).value_counts().reset_index()
-                        counts.columns = ['response', 'count']
-                        try:
-                            pie = alt.Chart(counts).mark_arc(innerRadius=40, stroke='white').encode(
-                                theta=alt.Theta('count:Q'),
-                                color=alt.Color('response:N', legend=alt.Legend(orient='bottom')),
-                                tooltip=[alt.Tooltip('response:N', title='Réponse'), alt.Tooltip('count:Q', title='Nombre')]
-                            ).properties(width=250, height=250)
-                        except Exception:
-                            pie = None
-
-                        if pie is not None:
-                            left, right = st.columns([3,1])
-                            with left:
-                                st.altair_chart(chart, use_container_width=True)
-                            with right:
-                                st.altair_chart(pie, use_container_width=True)
-                        else:
-                            st.altair_chart(chart, use_container_width=True)
-                    
-                    # Show user's answer prominently
-                    group_icon = get_group_icon(user_classifier)
-                    group_color = get_group_color(user_classifier)
-                    st.markdown(f"""
-                    <div style="background: {group_color}20; padding: 15px; border-radius: 8px; border-left: 4px solid {group_color};">
-                        <span style="font-size: 1.5em;">{group_icon}</span>
-                        <strong style="color: {group_color};">Ta réponse:</strong> {user_answer}
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    # Calculate how many people gave the same answer
-                    same_answer = all_data[all_data[actual_col] == user_answer].shape[0]
-                    total = all_data[actual_col].notna().sum()
-                    percentage = (same_answer / total * 100) if total > 0 else 0
-                    
-                    st.markdown(f"*{same_answer} personnes ({percentage:.0f}%) ont donné la même réponse*")
-                    
-            except Exception as e:
-                st.error(f"Erreur: {e}")
+# if CATEGORY_QUESTIONS:
+#     st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+#     st.markdown("### 📋 Questions à choix")
+#
+#     for i, q_col in enumerate(CATEGORY_QUESTIONS):
+#         # Find the best matching column for the question
+#         actual_col = find_best_column(all_data.columns, q_col)
+#
+#         # Special handling for the scenario question which may have different spacing/format
+#         if actual_col is None and 'scénario' in q_col.lower():
+#             actual_col = next((col for col in all_data.columns if 'scénario' in col.lower() and '22' in col.lower()), None)
+#
+#         if actual_col is None:
+#             actual_col = q_col if q_col in all_data.columns else q_col
+#
+#         with st.expander(f"📌 {q_col}", expanded=(i==0)):
+#             try:
+#                 user_answer = user_data[actual_col]
+#                 if pd.isna(user_answer):
+#                     st.warning("Tu n'as pas répondu à cette question.")
+#                 else:
+#                     # Check if it's a yes/no question
+#                     if is_yes_no_question(all_data, actual_col):
+#                         # Use pie charts for yes/no questions
+#                         chart = plot_pie_comparison(
+#                             df=all_data,
+#                             question_col=actual_col,
+#                             classifier_col=CLASSIFIER_COL,
+#                             user_value=user_answer,
+#                             show_other_groups=show_all_groups
+#                         )
+#                         st.altair_chart(chart, use_container_width=True)
+#                     else:
+#                         # Use bar charts for other categorical questions and also show a pie summary
+#                         chart = plot_categorical_comparison(
+#                             df=all_data,
+#                             question_col=actual_col,
+#                             classifier_col=CLASSIFIER_COL,
+#                             user_value=user_answer,
+#                             show_other_groups=show_all_groups,
+#                             color_by_group=show_color_by_group
+#                         )
+#
+#                         # Create a small pie chart summary of the overall distribution for this question
+#                         counts = all_data[actual_col].dropna().astype(str).value_counts().reset_index()
+#                         counts.columns = ['response', 'count']
+#                         try:
+#                             pie = alt.Chart(counts).mark_arc(innerRadius=40, stroke='white').encode(
+#                                 theta=alt.Theta('count:Q'),
+#                                 color=alt.Color('response:N', legend=alt.Legend(orient='bottom')),
+#                                 tooltip=[alt.Tooltip('response:N', title='Réponse'), alt.Tooltip('count:Q', title='Nombre')]
+#                             ).properties(width=250, height=250)
+#                         except Exception:
+#                             pie = None
+#
+#                         if pie is not None:
+#                             left, right = st.columns([3,1])
+#                             with left:
+#                                 st.altair_chart(chart, use_container_width=True)
+#                             with right:
+#                                 st.altair_chart(pie, use_container_width=True)
+#                         else:
+#                             st.altair_chart(chart, use_container_width=True)
+#
+#                     # Show user's answer prominently
+#                     group_icon = get_group_icon(user_classifier)
+#                     group_color = get_group_color(user_classifier)
+#                     st.markdown(f"""
+#                     <div style="background: {group_color}20; padding: 15px; border-radius: 8px; border-left: 4px solid {group_color};">
+#                         <span style="font-size: 1.5em;">{group_icon}</span>
+#                         <strong style="color: {group_color};">Ta réponse:</strong> {user_answer}
+#                     </div>
+#                     """, unsafe_allow_html=True)
+#
+#                     # Calculate how many people gave the same answer
+#                     same_answer = all_data[all_data[actual_col] == user_answer].shape[0]
+#                     total = all_data[actual_col].notna().sum()
+#                     percentage = (same_answer / total * 100) if total > 0 else 0
+#
+#                     st.markdown(f"*{same_answer} personnes ({percentage:.0f}%) ont donné la même réponse*")
+#
+#             except Exception as e:
+#                 st.error(f"Erreur: {e}")
 
 # Summary statistics with group breakdown
-st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
-with st.expander("📊 Statistiques globales"):
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Participants totaux", all_data.shape[0])
-    with col2:
-        st.metric("Groupes", all_data[CLASSIFIER_COL].nunique())
-    with col3:
-        st.metric("Questions", len(SCALE_QUESTIONS) + len(CATEGORY_QUESTIONS))
-    
-    # Group breakdown
-    st.markdown("### Répartition par groupe:")
-    group_counts = all_data[CLASSIFIER_COL].value_counts()
-    for group, count in group_counts.items():
-        icon = get_group_icon(group)
-        color = get_group_color(group)
-        percentage = (count / all_data.shape[0] * 100)
-        st.markdown(f"""
-        <div style="display: flex; align-items: center; margin: 0.5rem 0;">
-            <span style="color: {color}; font-size: 1.5em; margin-right: 0.5rem;">{icon}</span>
-            <span style="flex: 1;"><strong>{group}:</strong> {count} participants ({percentage:.1f}%)</span>
-        </div>
-        """, unsafe_allow_html=True)
+# st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
+# with st.expander("📊 Statistiques globales"):
+#     col1, col2, col3 = st.columns(3)
+#     with col1:
+#         st.metric("Participants totaux", all_data.shape[0])
+#     with col2:
+#         st.metric("Groupes", all_data[CLASSIFIER_COL].nunique())
+#     with col3:
+#         st.metric("Questions", len(SCALE_QUESTIONS) + len(CATEGORY_QUESTIONS))
+#
+#     # Group breakdown
+#     st.markdown("### Répartition par groupe:")
+#     group_counts = all_data[CLASSIFIER_COL].value_counts()
+#     for group, count in group_counts.items():
+#         icon = get_group_icon(group)
+#         color = get_group_color(group)
+#         percentage = (count / all_data.shape[0] * 100)
+#         st.markdown(f"""
+#         <div style="display: flex; align-items: center; margin: 0.5rem 0;">
+#             <span style="color: {color}; font-size: 1.5em; margin-right: 0.5rem;">{icon}</span>
+#             <span style="flex: 1;"><strong>{group}:</strong> {count} participants ({percentage:.1f}%)</span>
+#         </div>
+#         """, unsafe_allow_html=True)
 
 # Raw data (optional)
-if st.checkbox("🔍 Voir les données brutes (anonymisées)"):
-    st.dataframe(
-        all_data.drop(columns=[IDENTIFIER_COL], errors='ignore'),
-        use_container_width=True,
-        height=400
-    )
+# if st.checkbox("🔍 Voir les données brutes (anonymisées)"):
+#     st.dataframe(
+#         all_data.drop(columns=[IDENTIFIER_COL], errors='ignore'),
+#         use_container_width=True,
+#         height=400
+#     )
 
 # Footer
 st.markdown('<div class="custom-divider"></div>', unsafe_allow_html=True)
