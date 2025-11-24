@@ -2,3 +2,13 @@ streamlit
 pandas
 altair
 requests
+ssl
+certifi
+urllib3
+io
+matplotlib
+seaborn
+numpy
+re
+Counter
+WordCloud

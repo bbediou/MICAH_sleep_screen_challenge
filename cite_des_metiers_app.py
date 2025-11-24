@@ -10,12 +10,11 @@ import io
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+import re
 from collections import Counter
 # Vérifier que wordcloud est disponible, sinon l'installer
 try:
     from wordcloud import WordCloud
-    import matplotlib.pyplot as plt
-
     wordcloud_available = True
 except ImportError:
     st.error("📦 La bibliothèque 'wordcloud' n'est pas installée. Veuillez l'installer avec : `pip install wordcloud`")
@@ -279,7 +278,6 @@ def create_wordcloud_comparison(data, text_col, category_col):
         combined_text = ' '.join(text_series.astype(str))
 
         # Nettoyer le texte (optionnel - vous pouvez ajuster selon vos besoins)
-        import re
         combined_text = re.sub(r'[^\w\s]', ' ', combined_text)  # Supprimer la ponctuation
         combined_text = re.sub(r'\s+', ' ', combined_text)  # Normaliser les espaces
 
@@ -715,10 +713,6 @@ if wordcloud_available and ai_features_column in df.columns and age_category_col
         st.subheader("🔤 Mots les plus fréquents")
 
         # Analyser les mots les plus fréquents pour chaque groupe
-        from collections import Counter
-        import re
-
-
         def get_top_words(text_series, top_n=10):
             if len(text_series) == 0:
                 return []
