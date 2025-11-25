@@ -465,7 +465,7 @@ with st.container():
         """, unsafe_allow_html=True)
         
         # Chart from previous request (Static Matplotlib for the "Study Data")
-        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4><br><p>Voici les résultats de la cohorte MICAH concernant les activités avant l'endormissement.</p>", unsafe_allow_html=True)
+        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4><p>Voici les résultats de la cohorte MICAH concernant les activités avant l'endormissement.</p>", unsafe_allow_html=True)
         #st.image("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
         
         activities = ['Envoyer des messages aux ami.e.s', 'Vérifier les réseaux sociaux', 'Regarder des vidéos sur Youtube', 'Lire sur un livre/kindle', 'Jouer à des jeux vidéo hors ligne', 'Jouer à des jeux non numériques', 'Publier sur les réseaux sociaux']
