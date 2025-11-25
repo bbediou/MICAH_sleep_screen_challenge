@@ -674,15 +674,14 @@ with st.container():
 
     elif st.session_state.step == 10:
         st.progress(60)
-        st.title("❤️ IA & Émotions")
+        st.title("Émotions & IA")
 
         user_role = st.session_state.responses['Category']
 
         # --- NEW REAL DATA LOGIC ---
         options = ["Oui", "Non", "Je ne sais pas"]
         my_counts = get_real_counts(st.session_state.sheet_data, user_role, 'ChatGPT_Feelings', options)
-
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         fig_donut = plot_donut(st.session_state.responses['ChatGPT_Feelings'], options, my_counts)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -700,12 +699,11 @@ with st.container():
     # ==========================
     elif st.session_state.step == 11:
         st.progress(66)
-        st.title("L'Intelligence Artificielle")
+        st.title("Préoccupation des Intelligence Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
             use_container_width=True)  #
 
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Dans quelle mesure êtes-vous préoccupé.e.s par les IA ?")
         ai_concern_scale = st.select_slider("", options=list(range(1, 11)), value=5)
         # Custom labels below the slider
