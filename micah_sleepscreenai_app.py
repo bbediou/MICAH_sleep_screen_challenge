@@ -849,7 +849,7 @@ with st.container():
                     st.error("Erreur de sauvegarde.")
 
     # ==========================
-    # region STEP 18: Ad and see results
+    # region STEP 18: Ad final
     # ==========================
     elif st.session_state.step == 18:
         st.progress(100)
@@ -872,13 +872,20 @@ with st.container():
 
        # See results
         if st.button("Voir les résultats"):
-            st.title("Résumé de vos réponses")
-            st.markdown("### Voici un aperçu de ce que vous avez répondu :")
+            next_step()
+            st.rerun()
 
-            #df = pd.DataFrame.from_dict(st.session_state.responses, orient='index', columns=['Réponse'])
-            #st.dataframe(df)
+    # ==========================
+    # region STEP 19: See results
+    # ==========================
+    elif st.session_state.step == 19:
+        st.title("Résumé de vos réponses")
+        st.markdown("### Voici un aperçu de ce que vous avez répondu :")
 
-            if st.button("Terminer"):
-                st.session_state.step = 1
-                st.session_state.responses = {}
-                st.rerun()
+        #df = pd.DataFrame.from_dict(st.session_state.responses, orient='index', columns=['Réponse'])
+        #st.dataframe(df)
+
+        if st.button("Terminer"):
+            st.session_state.step = 1
+            st.session_state.responses = {}
+            st.rerun()
