@@ -481,8 +481,9 @@ with st.container():
         
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### A quelle fréquence utilisez-vous l'IA ?")
-        ai_freq = st.select_slider("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
-        
+        #ai_freq = st.select_slider("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
+        ai_freq = st.radio("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
+
         st.markdown("#### Dans quel but ?", unsafe_allow_html=True)
         ai_purpose = st.multiselect("", ["Travail / Devoirs", "Loisir", "Recherche d'info", "Compagnon virtuel", "Soutien psychologique", "Autre"])
         
