@@ -724,12 +724,11 @@ with st.container():
     # ==========================
     elif st.session_state.step == 12:
         st.progress(72)
-        st.title("L'Intelligence Artificielle")
+        st.title("Inquiétudes et Intelligences Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-            use_container_width=True)  #
+            use_container_width=True)
 
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Quels sont vos inquiétudes par rapport à l'IA ?")
         ai_concern_items = st.multiselect("", ["Perte des capacités de réflexion critique", "Impact sur les générations futures", "Impact sur les industries artistiques et créatives", "Désinformation/mésinformation",
                                          "Impact sur le marché du travail", "Impact sur l'environnement","Manque de confidentialité et de protection des données", "Je n'ai aucune inquiétude", "Autre"])
@@ -753,12 +752,11 @@ with st.container():
     # ==========================
     elif st.session_state.step == 13:
         st.progress(78)
-        st.title("L'Intelligence Artificielle")
+        st.title("Responsabilité & Intelligences Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-            use_container_width=True)  #
+            use_container_width=True)
 
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Selon vous, qui est le plus responsable de l'enseignement des compétences dans les IA ?")
         ai_responsible_people = st.multiselect("", ["Moi-même",
                                                "Mes proches (amis, frères, soeurs)",
@@ -788,12 +786,10 @@ with st.container():
     # ==========================
     elif st.session_state.step == 14:
         st.progress(84)
-        st.title("L'Intelligence Artificielle")
+        st.title("Fonctionnalité & Intelligences Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-            use_container_width=True)  #
-
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+            use_container_width=True)
         st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ?")
         ai_feature = st.text_input("Ecrivez toutes vos idées", key = "ai_feature")
 
@@ -810,13 +806,11 @@ with st.container():
     # ==========================
     elif st.session_state.step == 15:
         st.progress(90)
-        st.title("L'Intelligence Artificielle")
+        st.title("Prévention & Intelligences Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-            use_container_width=True)  #
-
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-        st.markdown("#### Les campagnes de prévention sont souvent austères, parmi les éléments suivants, lesquels t’aideraient à mieux comprendre les informations sur la bonne utilisation et la sécurité des IA?")
+            use_container_width=True)
+        st.markdown("#### Les campagnes de prévention sont trop sérieuses, parmi les éléments suivants, lesquels t’aideraient à mieux comprendre les informations sur la bonne utilisation et la sécurité des IA?")
         ai_prevention_campaign = st.multiselect("", ["Des explications plus simples et claires",
                                                     "Des vidéos courtes ou des tutoriels",
                                                     "Des influenceurs/ambassadeurs qui en parlent",
@@ -846,9 +840,7 @@ with st.container():
         st.title("Exprimez-vous")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-            use_container_width=True)  #
-
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+            use_container_width=True)
         st.markdown("#### Laissez-nous vos remarques et commentaires :")
         ai_comments = st.text_input("")
 
@@ -871,6 +863,7 @@ with st.container():
         #     <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
         # </div>
         # """, unsafe_allow_html=True)
+        st.image("./images/image_accueil.png", use_container_width=True)
 
         # Initialize a flag to track if data was already submitted
         if 'data_submitted' not in st.session_state:
