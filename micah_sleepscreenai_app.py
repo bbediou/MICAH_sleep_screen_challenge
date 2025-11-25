@@ -726,8 +726,8 @@ with st.container():
             use_container_width=True)  #
 
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-        st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
-        ai_feature = st.text_input("Quelle fonctionnalité ...", key = "ai_feature")
+        st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ?")
+        ai_feature = st.text_input("Ecrivez toutes vos idées", key = "ai_feature")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -758,7 +758,7 @@ with st.container():
 
         ai_other_text = ""
         if "Autre" in ai_prevention_campaign:
-            ai_other_text = st.text_input("Précisez pour 'Autre' :")
+            ai_other_text = st.text_input("Précisez pour 'Autre' :", key="ai_other_text")
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("Continuer ➡️"):
@@ -770,27 +770,27 @@ with st.container():
             st.rerun()
     # endregion
 
-        # ==========================
-        # region STEP 15: Give comment
-        # ==========================
-        elif st.session_state.step == 15:
-            st.progress(96)
-            st.title("Exprimez-vous")
-            st.image(
-                "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                use_container_width=True)  #
+    # ==========================
+    # region STEP 15: Give comment
+    # ==========================
+    elif st.session_state.step == 15:
+        st.progress(96)
+        st.title("Exprimez-vous")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
 
-            st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-            st.markdown("#### Laissez-nous vos remarques et commentaires :")
-            ai_comments = st.text_input("Votre commentaire : ...", key="ai_comments")
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Laissez-nous vos remarques et commentaires :")
+        ai_comments = st.text_input("Votre commentaire : ...", key="ai_comments")
 
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-            if st.button("Continuer ➡️"):
-                st.session_state.responses['AI_Comments'] = ai_comments
-                next_step()
-                st.rerun()
-        # endregion
+        if st.button("Continuer ➡️"):
+            st.session_state.responses['AI_Comments'] = ai_comments
+            next_step()
+            st.rerun()
+    # endregion
 
 
     # ==========================
