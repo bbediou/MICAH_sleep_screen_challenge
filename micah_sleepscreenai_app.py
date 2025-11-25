@@ -394,7 +394,7 @@ with st.container():
         st.title("Habitudes de Sommeil")
         st.image("./images/sommeil_ecran.jpg", use_container_width=True)
 
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Regardez-vous des écrans avant de dormir ?")
         screens = st.radio("", ["Jamais", "Parfois", "Souvent", "Tous les soirs"], index=None)
         st.markdown("</div>", unsafe_allow_html=True)
