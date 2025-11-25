@@ -18,6 +18,8 @@ import plotly.graph_objects as go
 import plotly.express as px
 from wordcloud import WordCloud
 from datetime import datetime
+import gspread
+from google.oauth2.service_account import Credentials
 # endregion
 
 # region Test de connexion (à supprimer après test)
@@ -33,6 +35,19 @@ from datetime import datetime
 
 # region --- 1. PAGE CONFIG ---
 st.set_page_config(page_title="Etude MICAH", layout="centered")
+
+
+# Load service account info from secrets
+service_account_info = st.secrets["gcp_service_account"]
+
+credentials = Credentials.from_service_account_info(
+    service_account_info,
+    scopes=["https://www.googleapis.com/auth/spreadsheets"]
+)
+
+client = gspread.authorize(credentials)
+
+sheet = client.open("citedesmetiers_answers").worksheet("Reponses")
 # endregion
 
 # region --- 2. CSS DESIGN ---

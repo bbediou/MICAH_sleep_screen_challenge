@@ -10,3 +10,5 @@ numpy
 wordcloud
 plotly
 st-gsheets-connection
+gspread
+google.oauth2.service_account
