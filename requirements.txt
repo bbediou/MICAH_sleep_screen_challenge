@@ -9,4 +9,4 @@ seaborn
 numpy
 wordcloud
 plotly
-streamlit_gsheets
+st-gsheets-connection
