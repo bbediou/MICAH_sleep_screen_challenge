@@ -428,7 +428,7 @@ with st.container():
         # Get comparison counts if mode is active
         other_counts = get_real_counts(st.session_state.sheet_data, other_role, 'Screen_Habit', options) if st.session_state.compare_mode else None
         
-        st.markdown(f"<div class='css-card'><h4>Ton groupe : {user_role}</h4>", unsafe_allow_html=True)
+        st.markdown(f"<div class='css-card'><h4>Votre groupe : {user_role}</h4>", unsafe_allow_html=True)
         # Use 'my_counts' instead of 'my_data'
         fig = plot_likert(st.session_state.responses['Screen_Habit'], options, my_counts, other_counts, user_role, other_role)
         st.plotly_chart(fig, use_container_width=True)
@@ -451,20 +451,21 @@ with st.container():
     # ==========================
     elif st.session_state.step == 4:
         st.progress(18)
-        st.title("Information Scientifique")
-        st.image("https://i.imgur.com/F0gQ2Zq.png", caption="Cycle du Sommeil", use_container_width=True) # 
+        st.title("Point Info")
+        #st.image("https://i.imgur.com/F0gQ2Zq.png", caption="Cycle du Sommeil", use_container_width=True) #
 
         
         st.markdown("""
         <div class='css-card'>
-            [cite_start]<h3>Le saviez-vous ?</h3>
-            <p><strong>Lumière Bleue</strong><br>
-            L'exposition prolongée retarde la sécrétion de mélatonine d'environ 1 heure.</p>
+            <h3>Le saviez-vous ?</h3>
+            <p><strong>La Lumière Bleue</strong><br>
+            L'exposition prolongée retarde la sécrétion de mélatonine d'environ 1 heure.<br>
+            Ainsi, regarder par exemple votre smartphone peut retarder votre endormissement.</p>
         </div>
         """, unsafe_allow_html=True)
         
         # Chart from previous request (Static Matplotlib for the "Study Data")
-        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH [cite: 40]</h4>", unsafe_allow_html=True)
+        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4>", unsafe_allow_html=True)
         st.image("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
         
         activities = ['Text friends', 'Check social media', 'Watch Youtube', 'Read a book/kindle', 'Play VG offline', 'Play non-digital game', 'Post on social media']
