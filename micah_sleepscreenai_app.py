@@ -831,23 +831,33 @@ with st.container():
         #     <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
         # </div>
         # """, unsafe_allow_html=True)
-        
-        if st.button("Envoyer mes réponses"):
-            with st.spinner("Envoi en cours..."):
-                #success = save_to_google_sheets(st.session_state.responses)
 
-                # Add timestamp
-                st.session_state.responses['Timestamp'] = datetime.now().isoformat()
-                success = save_data_securely(st.session_state.responses, SHEET_ID, WORKSHEET_NAME, client)
-                if success:
-                    st.image("https://i.imgur.com/0dZ8ZqZ.png", use_container_width=True)
-                    st.success("Merci ! Vos réponses ont été enregistrées.")
-                    st.balloons()
-                    if st.button("Accéder à mes réponses"):
-                        next_step()
+        # Initialize a flag to track if data was already submitted
+        if 'data_submitted' not in st.session_state:
+            st.session_state.data_submitted = False
+
+        if not st.session_state.data_submitted:
+            if st.button("Envoyer mes réponses"):
+                with st.spinner("Envoi en cours..."):
+                    #success = save_to_google_sheets(st.session_state.responses)
+
+                    # Add timestamp
+                    st.session_state.responses['Timestamp'] = datetime.now().isoformat()
+                    success = save_data_securely(st.session_state.responses, SHEET_ID, WORKSHEET_NAME, client)
+                    if success:
+                        st.session_state.data_submitted = True
                         st.rerun()
-                else:
-                    st.error("Erreur de sauvegarde.")
+                    else:
+                        st.error("Erreur de sauvegarde.")
+        else:
+            # Data has been submitted, show success message
+            st.image("https://i.imgur.com/0dZ8ZqZ.png", use_container_width=True)
+            st.success("Merci ! Vos réponses ont été enregistrées.")
+            st.balloons()
+
+            if st.button("Accéder à mes réponses"):
+                next_step()
+                st.rerun()
 
     # ==========================
     # region STEP 18: Ad final
@@ -855,6 +865,7 @@ with st.container():
     elif st.session_state.step == 18:
         st.progress(100)
         st.title("Vos réponses")
+
 
         # --- Texte Streamlit ---
         st.markdown("""
