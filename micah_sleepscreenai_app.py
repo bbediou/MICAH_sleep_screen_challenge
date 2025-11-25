@@ -715,27 +715,27 @@ with st.container():
             st.rerun()
     # endregion
 
-        # ==========================
-        # region STEP 13: AI Features
-        # ==========================
-        elif st.session_state.step == 13:
-            st.progress(94)
-            st.title("L'Intelligence Artificielle")
-            st.image(
-                "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                use_container_width=True)  #
+    # ==========================
+    # region STEP 13: AI Features
+    # ==========================
+    elif st.session_state.step == 13:
+        st.progress(94)
+        st.title("L'Intelligence Artificielle")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
 
-            st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-            st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
-            ai_feature = st.text_input()
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
+        ai_feature = st.text_input()
 
-            st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-            if st.button("Valider"):
-                st.session_state.responses['AI_Feature'] = ai_feature
-                next_step()
-                st.rerun()
-        # endregion
+        if st.button("Valider"):
+            st.session_state.responses['AI_Feature'] = ai_feature
+            next_step()
+            st.rerun()
+    # endregion
 
     # ==========================
     # region STEP 14: AI Prevention Campaign
