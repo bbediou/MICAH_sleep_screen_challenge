@@ -365,7 +365,7 @@ with st.container():
     # region STEP 2: SLEEP QUESTION
     # ==========================
     elif st.session_state.step == 2:
-        st.progress(10)
+        st.progress(6)
         st.title("Habitudes de Sommeil")
         st.image("https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
         
@@ -388,7 +388,7 @@ with st.container():
     # ==========================
     # STEP 3: SLEEP VIZ (REAL DATA)
     elif st.session_state.step == 3:
-        st.progress(20)
+        st.progress(12)
         st.title("📊 Résultats en direct")
         
         user_role = st.session_state.responses['Category']
@@ -425,7 +425,7 @@ with st.container():
     # region STEP 4: FACTS (INTERVENTION)
     # ==========================
     elif st.session_state.step == 4:
-        st.progress(40)
+        st.progress(18)
         st.title("Information Scientifique")
         st.image("https://i.imgur.com/F0gQ2Zq.png", caption="Cycle du Sommeil", use_container_width=True) # 
 
@@ -474,7 +474,7 @@ with st.container():
     # region STEP 5: AI QUESTION
     # ==========================
     elif st.session_state.step == 5:
-        st.progress(60)
+        st.progress(24)
         st.title("L'Intelligence Artificielle")
         st.image("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True) # 
 
@@ -506,7 +506,7 @@ with st.container():
     # region STEP 6: AI DATA VIZ
     # ==========================
     elif st.session_state.step == 6:
-        st.progress(70)
+        st.progress(30)
         st.title("📊 Usage de l'IA")
         
         user_role = st.session_state.responses['Category']
@@ -553,7 +553,7 @@ with st.container():
     # region STEP 7: AI benefit
     # ==========================
     elif st.session_state.step == 7:
-        st.progress(60)
+        st.progress(36)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -582,7 +582,7 @@ with st.container():
     # region STEP 8: AI benefit scale
     # ==========================
     elif st.session_state.step == 8:
-        st.progress(60)
+        st.progress(42)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -609,7 +609,7 @@ with st.container():
     # region STEP 9: FEELINGS QUESTION
     # ==========================
     elif st.session_state.step == 9:
-        st.progress(90)
+        st.progress(48)
         st.title("Finalisation")
         st.image("https://images.unsplash.com/photo-1516387938699-a93567ec168e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True) #
 
@@ -626,10 +626,33 @@ with st.container():
     # endregion
 
     # ==========================
+    # region STEP 10: IA feeling viz
+    # ==========================
+
+    elif st.session_state.step == 10:
+        st.progress(60)
+        st.title("❤️ IA & Émotions")
+
+        user_role = st.session_state.responses['Category']
+
+        # --- NEW REAL DATA LOGIC ---
+        options = ["Oui", "Non", "Je ne sais pas"]
+        my_counts = get_real_counts(st.session_state.sheet_data, user_role, 'ChatGPT_Feelings', options)
+
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        fig_donut = plot_donut(st.session_state.responses['ChatGPT_Feelings'], options, my_counts)
+        st.plotly_chart(fig_donut, use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
+        # ---------------------------
+
+    # endregion
+
+
+    # ==========================
     # region STEP 10: AI level of concern scale
     # ==========================
     elif st.session_state.step == 10:
-        st.progress(91)
+        st.progress(66)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -655,7 +678,7 @@ with st.container():
     # region STEP 11: AI Concern Items
     # ==========================
     elif st.session_state.step == 11:
-        st.progress(92)
+        st.progress(72)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -684,7 +707,7 @@ with st.container():
     # region STEP 12: AI Responsible People
     # ==========================
     elif st.session_state.step == 12:
-        st.progress(93)
+        st.progress(78)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -719,7 +742,7 @@ with st.container():
     # region STEP 13: AI Features
     # ==========================
     elif st.session_state.step == 13:
-        st.progress(94)
+        st.progress(84)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -741,7 +764,7 @@ with st.container():
     # region STEP 14: AI Prevention Campaign
     # ==========================
     elif st.session_state.step == 14:
-        st.progress(95)
+        st.progress(90)
         st.title("L'Intelligence Artificielle")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -790,29 +813,6 @@ with st.container():
             st.session_state.responses['AI_Comments'] = ai_comments
             next_step()
             st.rerun()
-    # endregion
-
-
-    # ==========================
-    # region STEP 15: IA viz
-    # ==========================
-
-    elif st.session_state.step == 20:
-        st.progress(100)
-        st.title("❤️ IA & Émotions")
-        
-        user_role = st.session_state.responses['Category']
-        
-        # --- NEW REAL DATA LOGIC ---
-        options = ["Oui", "Non", "Je ne sais pas"]
-        my_counts = get_real_counts(st.session_state.sheet_data, user_role, 'ChatGPT_Feelings', options)
-        
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-        fig_donut = plot_donut(st.session_state.responses['ChatGPT_Feelings'], options, my_counts)
-        st.plotly_chart(fig_donut, use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-        # ---------------------------
-
     # endregion
 
     # ==========================
