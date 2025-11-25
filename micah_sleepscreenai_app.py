@@ -933,7 +933,7 @@ with st.container():
         # --- Texte Streamlit ---
         st.markdown("""
         <div class='css-card'>
-        <h3>👋 Tu as entre 11 et 15 ans ?>/h3>
+        <h3>👋 Tu as entre 11 et 15 ans ?</h3>
         <p>Participe à Well-Play, une étude scientifique de l’UNIGE et de la HedS sur le lien entre jeux vidéo, bien-être et apprentissage –
         que tu joues aux jeux vidéo ou pas.</p>
         
