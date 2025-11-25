@@ -927,7 +927,7 @@ with st.container():
     # ==========================
     elif st.session_state.step == 19:
         st.progress(100)
-        st.title("Merci pour votre participation")
+        st.title("Merci pour votre participation !")
 
 
         # --- Texte Streamlit ---
@@ -953,9 +953,9 @@ with st.container():
 
 
        # See results
-        if st.button("Voir les résultats"):
-            next_step()
-            st.rerun()
+       #  if st.button("Terminer"):
+       #      next_step()
+       #      st.rerun()
 
     # ==========================
     # region STEP 19: See results
