@@ -628,12 +628,12 @@ with st.container():
     # ==========================
     elif st.session_state.step == 8:
         st.progress(42)
-        st.title("L'Intelligence Artificielle")
+        st.title("Avantages des Intelligences Artificielles")
         st.image(
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
             use_container_width=True)  #
 
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Dans quelle mesure pensez-vous que les IA apportent des avantages ?")
         ai_benefit_scale = st.select_slider("", options=list(range(1, 11)), value=5)
         # Custom labels below the slider
