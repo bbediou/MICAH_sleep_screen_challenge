@@ -944,7 +944,8 @@ with st.container():
         <h3>👨‍👩‍👧 Pour participer</h3>
         <p>Montre ce message à un de tes parents ou envoie-lui le lien sur WhatsApp (tu peux aussi le partager à un·e ami·e) :</p>
     🔗 [https://well-play-teen.org](https://well-play-teen.org)
-    Pour toute question, contactez: [ ** wellplay @ unige.ch **](mailto:wellplay @ unige.ch)
+ 
+Pour toute question, contactez : [**wellplay@unige.ch**](mailto:wellplay@unige.ch)
         
     </div>
         
