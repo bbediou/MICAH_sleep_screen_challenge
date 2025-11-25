@@ -643,6 +643,10 @@ with st.container():
         fig_donut = plot_donut(st.session_state.responses['ChatGPT_Feelings'], options, my_counts)
         st.plotly_chart(fig_donut, use_container_width=True)
         st.markdown("</div>", unsafe_allow_html=True)
+
+        if st.button("Continuer ➡️"):
+            next_step()
+            st.rerun()
         # ---------------------------
 
     # endregion
