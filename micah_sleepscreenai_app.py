@@ -497,7 +497,7 @@ with st.container():
             
             st.session_state.responses['AI_Freq'] = ai_freq
             st.session_state.responses['AI_Purpose'] = ", ".join(final_purpose_list)
-            st.session_state.responses['AI_Wordcloud_Input'] = ai_other_text if ai_other_text else "Travail Fun Devoirs" # Dummy default
+            st.session_state.responses['AI_Wordcloud_Input'] = f'{" ".join(final_purpose_list)} {ai_other_text}' if ai_other_text else " ".join(final_purpose_list) # Dummy default
             next_step()
             st.rerun()
     # endregion
