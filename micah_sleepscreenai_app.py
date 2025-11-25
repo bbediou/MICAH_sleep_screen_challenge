@@ -842,6 +842,9 @@ with st.container():
                     st.image("https://i.imgur.com/0dZ8ZqZ.png", use_container_width=True)
                     st.success("Merci ! Vos réponses ont été enregistrées.")
                     st.balloons()
+                    if st.button("Accéder à mes réponses"):
+                        next_step()
+                        st.rerun()
                 else:
                     st.error("Erreur de sauvegarde.")
 
@@ -850,7 +853,7 @@ with st.container():
     # ==========================
     elif st.session_state.step == 18:
         st.progress(100)
-        st.title("Vos résultats")
+        st.title("Vos réponses")
 
 
         # Recruitment
@@ -863,17 +866,13 @@ with st.container():
 
         # --- Texte Streamlit ---
         st.markdown("""
-        ## 🌿 Étude scientifique **Well-Play**
+        📱Joue pour la science et soutiens la planète!
+ 
+        Rejoins l’étude Well-Play sur les jeux vidéo, le bien-être et l’apprentissage.
+ 
+        🎁 Jusqu’à 60 CHF en bons Galaxus pour toi et 40 CHF pour une asso écologique de ton choix
     
-        L’étude  **Well-Play** est un projet de recherche scientifique de l'**UNIGE** et la **HedS**.
-    
-        🔍 Objectif : Comprendre le lien entre jeu, bien-être et apprentissage chez les adolescent-es de 11 à 15 ans (inclus).
-    
-        🗓️ Déroulement : Après un 1er rendez-vous à l’université, depuis chez eux, les adolescent.e.s sont peut-être [invité.es](http://xn--invit-fsa.es/) à jouer pendant 6 semaines à un jeu fourni par l'équipe de recherche, dans un cadre modéré. Après 6 semaines, un 2e rendez-vous à l’université a lieu, puis un dernier rendez-vous 4 mois plus tard.
-    
-        🎁 Un don de 40 CHF au nom du/de la participant.e est fait à l’association pour l’écologie de son choix et jusqu’à 60 CHF de bons cadeau Galaxus offerts au/à la participant.e.
-    
-        ✅ **Plus d’information et inscription** (à faire par un parent) **:**
+        ✅ **Demande à un parent de t'y inscrire: **:**
     
         🔗 [https://well-play-teen.org](https://well-play-teen.org)
     
