@@ -345,7 +345,7 @@ with st.container():
         st.title("Défi Écrans & Sommeil")
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("### 1. Identifiez-vous")
-        code = st.text_input("Code secret (ex: PIZZA99)")
+        code = st.text_input("Choisissez un pseudo (ex: PIZZA99)")
         role = st.radio("Vous êtes :", ["Ado (11-17 ans)", "Adulte"], index=None)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -624,179 +624,179 @@ with st.container():
             st.rerun()
     # endregion
 
-    # # ==========================
-    # # region STEP 10: AI level of concern scale
-    # # ==========================
-    # elif st.session_state.step == 10:
-    #     st.progress(60)
-    #     st.title("L'Intelligence Artificielle")
-    #     st.image(
-    #         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #         use_container_width=True)  #
-    #
-    #     st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #     st.markdown("#### Dans quelle mesure êtes-vous préoccupé.e.s par les IA ?")
-    #     ai_concern_scale = st.select_slider("", options=list(range(1, 11)), value=5)
-    #     # Custom labels below the slider
-    #     col1, col2, col3 = st.columns([1, 2, 1])
-    #     with col1:
-    #         st.write("**Les IA ne me causent aucun souci**")
-    #     with col3:
-    #         st.write("**Les IA me causent beaucoup d'inquiétude**")
-    #
-    #     if st.button("Valider"):
-    #         st.session_state.responses['AI_Concern_Scale'] = ai_concern_scale
-    #         next_step()
-    #         st.rerun()
-    # # endregion
-    #
-    # # ==========================
-    # # region STEP 11: AI Concern Items
-    # # ==========================
-    # elif st.session_state.step == 11:
-    #     st.progress(60)
-    #     st.title("L'Intelligence Artificielle")
-    #     st.image(
-    #         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #         use_container_width=True)  #
-    #
-    #     st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #     st.markdown("#### Quels sont vos inquiétudes par rapport à l'IA ?")
-    #     ai_concern_items = st.multiselect("", ["Perte des capacités de réflexion critique", "Impact sur les générations futures", "Impact sur les industries artistiques et créatives", "Désinformation/mésinformation",
-    #                                      "Impact sur le marché du travail", "Impact sur l'environnement","Manque de confidentialité et de protection des données", "Je n'ai aucune inquiétude", "Autre"])
-    #
-    #     ai_other_text = ""
-    #     if "Autre" in ai_concern_items:
-    #         ai_other_text = st.text_input("Précisez pour 'Autre' :")
-    #     st.markdown("</div>", unsafe_allow_html=True)
-    #
-    #     if st.button("Valider"):
-    #         final_purpose_list = [p for p in ai_concern_items if p != "Autre"]
-    #         if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
-    #
-    #         st.session_state.responses['AI_Concern_Items'] = ", ".join(final_purpose_list)
-    #         next_step()
-    #         st.rerun()
-    # # endregion
-    #
-    # # ==========================
-    # # region STEP 12: AI Responsible People
-    # # ==========================
-    # elif st.session_state.step == 12:
-    #     st.progress(60)
-    #     st.title("L'Intelligence Artificielle")
-    #     st.image(
-    #         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #         use_container_width=True)  #
-    #
-    #     st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #     st.markdown("#### Selon vous, qui est le plus responsable de l'enseignement des compétences dans les IA ?")
-    #     ai_responsible_people = st.multiselect("", ["Moi-même",
-    #                                            "Mes proches (amis, frères, soeurs)",
-    #                                            "L'école (ienseignants, bibliothécaires)",
-    #                                            "L'IA elle-même",
-    #                                            "Les grandes entreprise de la Tech (Tech companies)",
-    #                                            "Les parents / éducateurs",
-    #                                            "Des experts (chercheurs)",
-    #                                            "Le gouvernement", "Autre"])
-    #
-    #     ai_other_text = ""
-    #     if "Autre" in ai_responsible_people:
-    #         ai_other_text = st.text_input("Précisez pour 'Autre' :")
-    #     st.markdown("</div>", unsafe_allow_html=True)
-    #
-    #     if st.button("Valider"):
-    #         final_purpose_list = [p for p in ai_responsible_people if p != "Autre"]
-    #         if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
-    #
-    #         st.session_state.responses['AI_Responsible_People'] = ", ".join(final_purpose_list)
-    #         next_step()
-    #         st.rerun()
-    # # endregion
-    #
-    #     # ==========================
-    #     # region STEP 13: AI Features
-    #     # ==========================
-    #     elif st.session_state.step == 13:
-    #         st.progress(60)
-    #         st.title("L'Intelligence Artificielle")
-    #         st.image(
-    #             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #             use_container_width=True)  #
-    #
-    #         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #         st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
-    #         ai_feature = st.text_input()
-    #
-    #         st.markdown("</div>", unsafe_allow_html=True)
-    #
-    #         if st.button("Valider"):
-    #             st.session_state.responses['AI_Feature'] = ai_feature
-    #             next_step()
-    #             st.rerun()
-    #     # endregion
-    #
-    # # ==========================
-    # # region STEP 14: AI Prevention Campaign
-    # # ==========================
-    # elif st.session_state.step == 14:
-    #     st.progress(60)
-    #     st.title("L'Intelligence Artificielle")
-    #     st.image(
-    #         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #         use_container_width=True)  #
-    #
-    #     st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #     st.markdown("#### Les campagnes de prévention sont souvent austères, parmi les éléments suivants, lesquels t’aideraient à mieux comprendre les informations sur la bonne utilisation et la sécurité des IA?")
-    #     ai_prevention_campaign = st.multiselect("", ["Des explications plus simples et claires",
-    #                                                 "Des vidéos courtes ou des tutoriels",
-    #                                                 "Des influenceurs/ambassadeurs qui en parlent",
-    #                                                 "Des ateliers ou démonstrations en classe",
-    #                                                 "Des illustrations (publicités nationales radio/tv/réseaux sociaux)",
-    #                                                 "Autre"])
-    #
-    #     ai_other_text = ""
-    #     if "Autre" in ai_prevention_campaign:
-    #         ai_other_text = st.text_input("Précisez pour 'Autre' :")
-    #     st.markdown("</div>", unsafe_allow_html=True)
-    #
-    #     if st.button("Valider"):
-    #         final_purpose_list = [p for p in ai_prevention_campaign if p != "Autre"]
-    #         if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
-    #
-    #         st.session_state.responses['AI_Prevention_Campaign'] = ", ".join(final_purpose_list)
-    #         next_step()
-    #         st.rerun()
-    # # endregion
-    #
-    #     # ==========================
-    #     # region STEP 14: AI Prevention Campaign
-    #     # ==========================
-    #     elif st.session_state.step == 14:
-    #         st.progress(60)
-    #         st.title("Exprimez-vous")
-    #         st.image(
-    #             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    #             use_container_width=True)  #
-    #
-    #         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-    #         st.markdown("#### Laissez-nous vos remarques et commentaires :")
-    #         ai_comments = st.text_input()
-    #
-    #         st.markdown("</div>", unsafe_allow_html=True)
-    #
-    #         if st.button("Valider"):
-    #             st.session_state.responses['AI_Comments'] = ai_comments
-    #             next_step()
-    #             st.rerun()
-    #     # endregion
+    # ==========================
+    # region STEP 10: AI level of concern scale
+    # ==========================
+    elif st.session_state.step == 10:
+        st.progress(60)
+        st.title("L'Intelligence Artificielle")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
+
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Dans quelle mesure êtes-vous préoccupé.e.s par les IA ?")
+        ai_concern_scale = st.select_slider("", options=list(range(1, 11)), value=5)
+        # Custom labels below the slider
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col1:
+            st.write("**Les IA ne me causent aucun souci**")
+        with col3:
+            st.write("**Les IA me causent beaucoup d'inquiétude**")
+
+        if st.button("Valider"):
+            st.session_state.responses['AI_Concern_Scale'] = ai_concern_scale
+            next_step()
+            st.rerun()
+    # endregion
+
+    # ==========================
+    # region STEP 11: AI Concern Items
+    # ==========================
+    elif st.session_state.step == 11:
+        st.progress(60)
+        st.title("L'Intelligence Artificielle")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
+
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Quels sont vos inquiétudes par rapport à l'IA ?")
+        ai_concern_items = st.multiselect("", ["Perte des capacités de réflexion critique", "Impact sur les générations futures", "Impact sur les industries artistiques et créatives", "Désinformation/mésinformation",
+                                         "Impact sur le marché du travail", "Impact sur l'environnement","Manque de confidentialité et de protection des données", "Je n'ai aucune inquiétude", "Autre"])
+
+        ai_other_text = ""
+        if "Autre" in ai_concern_items:
+            ai_other_text = st.text_input("Précisez pour 'Autre' :")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if st.button("Valider"):
+            final_purpose_list = [p for p in ai_concern_items if p != "Autre"]
+            if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
+
+            st.session_state.responses['AI_Concern_Items'] = ", ".join(final_purpose_list)
+            next_step()
+            st.rerun()
+    # endregion
+
+    # ==========================
+    # region STEP 12: AI Responsible People
+    # ==========================
+    elif st.session_state.step == 12:
+        st.progress(60)
+        st.title("L'Intelligence Artificielle")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
+
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Selon vous, qui est le plus responsable de l'enseignement des compétences dans les IA ?")
+        ai_responsible_people = st.multiselect("", ["Moi-même",
+                                               "Mes proches (amis, frères, soeurs)",
+                                               "L'école (ienseignants, bibliothécaires)",
+                                               "L'IA elle-même",
+                                               "Les grandes entreprise de la Tech (Tech companies)",
+                                               "Les parents / éducateurs",
+                                               "Des experts (chercheurs)",
+                                               "Le gouvernement", "Autre"])
+
+        ai_other_text = ""
+        if "Autre" in ai_responsible_people:
+            ai_other_text = st.text_input("Précisez pour 'Autre' :")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if st.button("Valider"):
+            final_purpose_list = [p for p in ai_responsible_people if p != "Autre"]
+            if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
+
+            st.session_state.responses['AI_Responsible_People'] = ", ".join(final_purpose_list)
+            next_step()
+            st.rerun()
+    # endregion
+
+        # ==========================
+        # region STEP 13: AI Features
+        # ==========================
+        elif st.session_state.step == 13:
+            st.progress(60)
+            st.title("L'Intelligence Artificielle")
+            st.image(
+                "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                use_container_width=True)  #
+
+            st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+            st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
+            ai_feature = st.text_input()
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            if st.button("Valider"):
+                st.session_state.responses['AI_Feature'] = ai_feature
+                next_step()
+                st.rerun()
+        # endregion
+
+    # ==========================
+    # region STEP 14: AI Prevention Campaign
+    # ==========================
+    elif st.session_state.step == 14:
+        st.progress(60)
+        st.title("L'Intelligence Artificielle")
+        st.image(
+            "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+            use_container_width=True)  #
+
+        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Les campagnes de prévention sont souvent austères, parmi les éléments suivants, lesquels t’aideraient à mieux comprendre les informations sur la bonne utilisation et la sécurité des IA?")
+        ai_prevention_campaign = st.multiselect("", ["Des explications plus simples et claires",
+                                                    "Des vidéos courtes ou des tutoriels",
+                                                    "Des influenceurs/ambassadeurs qui en parlent",
+                                                    "Des ateliers ou démonstrations en classe",
+                                                    "Des illustrations (publicités nationales radio/tv/réseaux sociaux)",
+                                                    "Autre"])
+
+        ai_other_text = ""
+        if "Autre" in ai_prevention_campaign:
+            ai_other_text = st.text_input("Précisez pour 'Autre' :")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        if st.button("Valider"):
+            final_purpose_list = [p for p in ai_prevention_campaign if p != "Autre"]
+            if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
+
+            st.session_state.responses['AI_Prevention_Campaign'] = ", ".join(final_purpose_list)
+            next_step()
+            st.rerun()
+    # endregion
+
+        # ==========================
+        # region STEP 15: Give comment
+        # ==========================
+        elif st.session_state.step == 15:
+            st.progress(60)
+            st.title("Exprimez-vous")
+            st.image(
+                "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                use_container_width=True)  #
+
+            st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+            st.markdown("#### Laissez-nous vos remarques et commentaires :")
+            ai_comments = st.text_input()
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            if st.button("Valider"):
+                st.session_state.responses['AI_Comments'] = ai_comments
+                next_step()
+                st.rerun()
+        # endregion
 
 
     # ==========================
     # region STEP 15: IA viz
     # ==========================
 
-    elif st.session_state.step == 15:
+    elif st.session_state.step == 20:
         st.progress(100)
         st.title("❤️ IA & Émotions")
         
@@ -817,7 +817,7 @@ with st.container():
     # ==========================
     # region STEP 16: SUBMIT
     # =========================
-    elif st.session_state.step == 10:
+    elif st.session_state.step == 16:
         # Recruitment
         st.markdown("""
         <div class='css-card' style='border: 1px solid #FF4B4B;'>
@@ -843,7 +843,7 @@ with st.container():
     # ==========================
     # region STEP 16: Ad and see results
     # ==========================
-    elif st.session_state.step == 8:
+    elif st.session_state.step == 21:
         st.progress(100)
         st.title("Vos résultats")
 
