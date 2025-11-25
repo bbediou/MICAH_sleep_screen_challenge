@@ -465,10 +465,10 @@ with st.container():
         """, unsafe_allow_html=True)
         
         # Chart from previous request (Static Matplotlib for the "Study Data")
-        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4>", unsafe_allow_html=True)
-        st.image("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
+        st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4><br><p>Voici les résultats de la cohorte MICAH concernant les activités avant l'endormissement.</p>", unsafe_allow_html=True)
+        #st.image("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
         
-        activities = ['Text friends', 'Check social media', 'Watch Youtube', 'Read a book/kindle', 'Play VG offline', 'Play non-digital game', 'Post on social media']
+        activities = ['Envoyer des messages aux ami.e.s', 'Vérifier les réseaux sociaux', 'Regarder des vidéos sur Youtube', 'Lire sur un livre/kindle', 'Jouer à des jeux vidéo hors ligne', 'Jouer à des jeux non numériques', 'Publier sur les réseaux sociaux']
         percentages = [81.03, 77.97, 75.18, 66.73, 42.81, 41.10, 39.57]
         sorted_indices = np.argsort(percentages)
         activities = [activities[i] for i in sorted_indices]
