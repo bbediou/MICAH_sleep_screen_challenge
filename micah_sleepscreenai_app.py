@@ -284,7 +284,7 @@ def plot_likert(user_choice, options, data_my_group, data_other_group=None, my_g
         barmode='group',
         margin=dict(l=0, r=0, t=30, b=0),
         height=300,
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(color='white'))
     )
     return fig
 
@@ -414,7 +414,7 @@ with st.container():
     # STEP 3: SLEEP VIZ (REAL DATA)
     elif st.session_state.step == 3:
         st.progress(12)
-        st.title("📊 Résultats en direct")
+        st.title("📊 Résultats : Ecran & Sommeil")
         
         user_role = st.session_state.responses['Category']
         other_role = "Adulte" if user_role.startswith("Ado") else "Ado (11-17 ans)"
@@ -428,7 +428,7 @@ with st.container():
         # Get comparison counts if mode is active
         other_counts = get_real_counts(st.session_state.sheet_data, other_role, 'Screen_Habit', options) if st.session_state.compare_mode else None
         
-        st.markdown(f"<div class='css-card'><h4>Comparaison : {user_role}</h4>", unsafe_allow_html=True)
+        st.markdown(f"<div class='css-card'><h4>Ton groupe : {user_role}</h4>", unsafe_allow_html=True)
         # Use 'my_counts' instead of 'my_data'
         fig = plot_likert(st.session_state.responses['Screen_Habit'], options, my_counts, other_counts, user_role, other_role)
         st.plotly_chart(fig, use_container_width=True)
