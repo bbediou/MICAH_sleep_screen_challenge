@@ -782,7 +782,7 @@ with st.container():
 
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Laissez-nous vos remarques et commentaires :")
-        ai_comments = st.text_input("Votre commentaire : ...", key="ai_comments")
+        ai_comments = st.text_input("")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
