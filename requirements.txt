@@ -8,5 +8,4 @@ matplotlib
 seaborn
 numpy
 wordcloud
-streamlit-gsheets
 plotly
