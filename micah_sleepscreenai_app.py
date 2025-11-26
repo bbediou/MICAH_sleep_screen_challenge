@@ -916,10 +916,9 @@ with st.container():
             next_step()
             st.rerun()
 
-            #if st.button("Accéder à mes réponses"):
-            #if st.button("Terminer"):
-             #   next_step()
-              #  st.rerun()
+            if st.button("Accéder à mes réponses"):
+                next_step()
+                st.rerun()
 
     # ==========================
     # region STEP 19: Ad final
