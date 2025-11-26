@@ -952,9 +952,9 @@ with st.container():
 
        # See results
         #if st.button("Terminer"):
-        # if st.button("Voir les résultats"):
-        #     next_step()
-        #     st.rerun()
+        if st.button("Voir les résultats"):
+            next_step()
+            st.rerun()
 
     # ==========================
     # region STEP 20: See results
