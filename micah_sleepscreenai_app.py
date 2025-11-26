@@ -374,6 +374,8 @@ with st.container():
             else:
                 st.warning("Veuillez remplir tous les champs.")
 
+        if st.button("Voir les résultats"):
+            st.session_state.step = 19
         # if st.button("Commencer"):
         #     if code and role:
         #         st.session_state.responses['Secret_Code'] = code
@@ -957,7 +959,7 @@ with st.container():
     elif st.session_state.step == 19:
         st.title("Résumé de vos réponses")
         st.markdown("### Voici un aperçu de ce que vous avez répondu :")
-
+        st.markdown("Cette page est en cours de construction. Elle arrive bientôt.")
 
         # region Charger les données et afficher les noms des colonnes
         #@st.cache_data(ttl=60)
