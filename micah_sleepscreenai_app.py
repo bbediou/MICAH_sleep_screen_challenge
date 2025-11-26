@@ -1261,40 +1261,40 @@ with st.container():
             return fig
 
 
-        # def create_donut_comparison(data, question_col, category_col):
-        #     """
-        #     Crée des graphiques en donut comparatifs pour adolescents et adultes
-        #     """
-        #
-        #     # Préparer les données
-        #     valid_data = data[(data[question_col].notna()) & (data[category_col].notna())].copy()
-        #     valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
-        #
-        #     # Séparer les données par groupe
-        #     adolescents_data = valid_data[valid_data['Groupe_Simple'] == 'Adolescents'][question_col]
-        #     adultes_data = valid_data[valid_data['Groupe_Simple'] == 'Adultes'][question_col]
-        #
-        #     # Cette colonne peut contenir plusieurs réponses séparées par des virgules
-        #     # On va les séparer et compter chaque élément
-        #     def process_multiple_answers(data_series):
-        #         if len(data_series) == 0:
-        #             return {}
-        #
-        #         all_answers = []
-        #         for response in data_series:
-        #             if pd.notna(response):
-        #                 # Séparer les réponses multiples (supposant qu'elles sont séparées par des virgules)
-        #                 answers = [answer.strip() for answer in str(response).split(',')]
-        #                 all_answers.extend(answers)
-        #         # Compter les occurrences
-        #         return Counter(all_answers)
-        #
-        #     adolescents_counts = process_multiple_answers(adolescents_data)
-        #     adultes_counts = process_multiple_answers(adultes_data)
-        #
-        #     return adolescents_counts, adultes_counts
-        #
-        #
+        def create_donut_comparison(data, question_col, category_col):
+            """
+            Crée des graphiques en donut comparatifs pour adolescents et adultes
+            """
+
+            # Préparer les données
+            valid_data = data[(data[question_col].notna()) & (data[category_col].notna())].copy()
+            valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
+
+            # Séparer les données par groupe
+            adolescents_data = valid_data[valid_data['Groupe_Simple'] == 'Adolescents'][question_col]
+            adultes_data = valid_data[valid_data['Groupe_Simple'] == 'Adultes'][question_col]
+
+            # Cette colonne peut contenir plusieurs réponses séparées par des virgules
+            # On va les séparer et compter chaque élément
+            def process_multiple_answers(data_series):
+                if len(data_series) == 0:
+                    return {}
+
+                all_answers = []
+                for response in data_series:
+                    if pd.notna(response):
+                        # Séparer les réponses multiples (supposant qu'elles sont séparées par des virgules)
+                        answers = [answer.strip() for answer in str(response).split(',')]
+                        all_answers.extend(answers)
+                # Compter les occurrences
+                return Counter(all_answers)
+
+            adolescents_counts = process_multiple_answers(adolescents_data)
+            adultes_counts = process_multiple_answers(adultes_data)
+
+            return adolescents_counts, adultes_counts
+
+
         # def plot_donut_charts(adolescents_counts, adultes_counts):
         #     """
         #     Affiche les graphiques en donut côte à côte
