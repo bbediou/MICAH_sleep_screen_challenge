@@ -1379,24 +1379,24 @@ with st.container():
             plt.tight_layout()
             return fig
         # endregion
-        #
-        # # region Section pour le code secret
-        # st.subheader("🔒 Validation du code secret")
-        # secret_code = st.text_input("Entre ton code secret :")
-        #
-        # # Variables pour stocker les données du participant
-        # participant_data = None
-        # valid_code = False
-        #
-        # if secret_code:
-        #     if secret_code in df["Choisis ton code secret"].values:
-        #         st.success("Code secret valide! Tu peux voir tes résultats.")
-        #         participant_data = df[df["Choisis ton code secret"] == secret_code].iloc[0]
-        #         valid_code = True
-        #     else:
-        #         st.error("Code secret invalide. Vérifie ton code et réessaie.")
-        #
-        # # endregion
+
+        # region Section pour le code secret
+        st.subheader("🔒 Validation du pseudo")
+        secret_code = st.text_input("Entre ton pseudo :")
+
+        # Variables pour stocker les données du participant
+        participant_data = None
+        valid_code = False
+
+        if secret_code:
+            if secret_code in df["Choisis ton code secret"].values:
+                st.success("Code secret valide! Tu peux voir tes résultats.")
+                participant_data = df[df["Choisis ton code secret"] == secret_code].iloc[0]
+                valid_code = True
+            else:
+                st.error("Code secret invalide. Vérifie ton code et réessaie.")
+
+        # endregion
         #
         # # region Graphique Likert pour les écrans avant de dormir
         # st.subheader("📱 Habitudes d'écrans avant le sommeil")
