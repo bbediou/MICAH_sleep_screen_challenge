@@ -1400,45 +1400,45 @@ with st.container():
                 st.error("Code secret invalide. Vérifie ton code et réessaye.")
 
         # endregion
-        #
-        # # region Graphique Likert pour les écrans avant de dormir
-        # st.subheader("📱 Habitudes d'écrans avant le sommeil")
-        #
-        # screen_habit_column = 'As-tu l’habitude de regarder des écrans avant de dormir?'
-        #
-        # if screen_habit_column in df.columns:
-        #     # Afficher les statistiques
-        #     screen_counts = df[screen_habit_column].value_counts()
-        #
-        #     st.write("**Répartition des réponses :**")
-        #     for answer, count in screen_counts.items():
-        #         percentage = (count / len(df)) * 100
-        #         st.write(f"- **{answer}** : {count} personnes ({percentage:.1f}%)")
-        #
-        #     # Si un code valide est entré, afficher la réponse du participant
-        #     participant_screen_habit = None
-        #     if valid_code and participant_data is not None:
-        #         participant_screen_habit = participant_data[screen_habit_column]
-        #         st.info(f"🎯 **Ta réponse :** {participant_screen_habit}")
-        #
-        #     # Créer et afficher le graphique Likert
-        #     fig = create_likert_chart(
-        #         df,
-        #         screen_habit_column,
-        #         "Habitudes d'écrans avant le sommeil - Échelle de Likert",
-        #         participant_screen_habit
-        #     )
-        #
-        #     st.pyplot(fig)
-        #
-        #     # Ajouter une légende si un participant est mis en évidence
-        #     if valid_code and participant_data is not None:
-        #         st.caption("🔴 **Barre avec bordure rouge** : Votre réponse")
-        #
-        # else:
-        #     st.error(f"Colonne '{screen_habit_column}' non trouvée dans les données")
-        #     st.write("Colonnes disponibles :")
-        #     st.write(df.columns.tolist())
+
+        # region Graphique Likert pour les écrans avant de dormir
+        st.subheader("📱 Habitudes d'écrans avant le sommeil")
+
+        screen_habit_column = 'Screen_Habit'
+
+        if screen_habit_column in df.columns:
+            # Afficher les statistiques
+            screen_counts = df[screen_habit_column].value_counts()
+
+            st.write("**Répartition des réponses :**")
+            for answer, count in screen_counts.items():
+                percentage = (count / len(df)) * 100
+                st.write(f"- **{answer}** : {count} personnes ({percentage:.1f}%)")
+
+            # Si un code valide est entré, afficher la réponse du participant
+            participant_screen_habit = None
+            if valid_code and participant_data is not None:
+                participant_screen_habit = participant_data[screen_habit_column]
+                st.info(f"🎯 **Ta réponse :** {participant_screen_habit}")
+
+            # Créer et afficher le graphique Likert
+            fig = create_likert_chart(
+                df,
+                screen_habit_column,
+                "Habitudes d'écrans avant le sommeil - Échelle de Likert",
+                participant_screen_habit
+            )
+
+            st.pyplot(fig)
+
+            # Ajouter une légende si un participant est mis en évidence
+            if valid_code and participant_data is not None:
+                st.caption("🔴 **Barre avec bordure rouge** : Votre réponse")
+
+        else:
+            st.error(f"Colonne '{screen_habit_column}' non trouvée dans les données")
+            st.write("Colonnes disponibles :")
+            st.write(df.columns.tolist())
 
         # endregion
 
