@@ -2,3 +2,12 @@ streamlit
 pandas
 altair
 requests
+certifi
+urllib3
+matplotlib
+seaborn
+numpy
+wordcloud
+plotly
+st-gsheets-connection
+gspread
