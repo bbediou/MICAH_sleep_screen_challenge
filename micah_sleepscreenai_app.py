@@ -1577,7 +1577,7 @@ with st.container():
         # region Word Cloud des fonctionnalités IA souhaitées
         st.subheader("☁️ Fonctionnalités IA souhaitées - Nuages de mots")
 
-        ai_features_column = 'Quelle fonctionnalité aimeriez-vous implémenter dans l\'IA ?'
+        ai_features_column = 'AI_Wordcloud_Input'
 
         if ai_features_column in df.columns and age_category_column in df.columns:
 
