@@ -1442,6 +1442,135 @@ with st.container():
 
         # endregion
 
+        # region Graphique pour les préoccupations liées à l'IA
+        st.subheader("🤖 Préoccupations concernant l'Intelligence Artificielle")
+
+        ai_concern_column = 'AI_Concern_Scale'
+        age_category_column = 'Category'  # Colonne qui distingue ados/adultes
+
+        if ai_concern_column in df.columns:
+
+            # Afficher les statistiques générales
+            ai_concerns = df[ai_concern_column].dropna()
+            valid_responses = ai_concerns[(ai_concerns >= 1) & (ai_concerns <= 10)]
+
+            if len(valid_responses) > 0:
+                st.write("**📊 Statistiques générales :**")
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    st.metric("Moyenne", f"{valid_responses.mean():.1f}/10")
+                with col2:
+                    st.metric("Réponses", len(valid_responses))
+
+                # Afficher la réponse du participant
+                participant_ai_concern = None
+                if valid_code and participant_data is not None:
+                    participant_ai_concern = participant_data[ai_concern_column]
+                    if pd.notna(participant_ai_concern) and 1 <= participant_ai_concern <= 10:
+                        st.info(f"🎯 **Ta réponse :** {int(participant_ai_concern)}/10")
+
+                        # Interpréter la réponse
+                        if participant_ai_concern <= 3:
+                            interpretation = "Tu es peu préoccupé par l'IA 😌"
+                        elif participant_ai_concern <= 6:
+                            interpretation = "Tu as un niveau modéré de préoccupation concernant l'IA 🤔"
+                        else:
+                            interpretation = "Tu es assez préoccupé par l'IA 😰"
+
+                        st.write(f"**Interprétation :** {interpretation}")
+
+                # Créer le graphique principal
+                fig1 = create_numeric_scale_chart(
+                    df, ai_concern_column,
+                    "Distribution des niveaux de préoccupation concernant l'IA",
+                    participant_ai_concern
+                )
+                st.pyplot(fig1)
+
+                # Ajouter la légende si un participant est mis en évidence
+                if valid_code and participant_data is not None and pd.notna(participant_ai_concern):
+                    st.caption("🔴 **Barre avec bordure rouge** : Votre réponse")
+
+                # Comparaison par groupe d'âge
+                if age_category_column in df.columns:
+                    st.subheader("📈 Comparaison Adolescents vs Adultes")
+
+                    fig2 = create_age_category_comparison_chart(df, ai_concern_column, age_category_column,
+                                                                "Comparaison des préoccupations IA : Ados vs Adultes")
+                    if fig2 is not None:
+                        st.pyplot(fig2)
+
+                        # Analyse comparative détaillée
+                        valid_comparison_data = df[
+                            (df[ai_concern_column].between(1, 10)) &
+                            (df[age_category_column].notna())
+                            ].copy()
+
+                        valid_comparison_data['Groupe_Simple'] = valid_comparison_data[age_category_column].apply(
+                            lambda x: "Adolescents" if pd.notna(x) and "ado" in str(x).lower() else
+                            "Adultes" if pd.notna(x) and "adulte" in str(x).lower() else "Autre"
+                        )
+
+                        comparison_stats = \
+                            valid_comparison_data[
+                                valid_comparison_data['Groupe_Simple'].isin(['Adolescents', 'Adultes'])].groupby(
+                                'Groupe_Simple')[ai_concern_column].agg(['mean', 'count', 'std']).round(2)
+
+                        if len(comparison_stats) > 0:
+                            st.write("**🔍 Analyse comparative :**")
+                            for group, stats in comparison_stats.iterrows():
+                                st.write(
+                                    f"- **{group}** : Moyenne de {stats['mean']:.1f}/10 ± {stats['std']:.1f} ({int(stats['count'])} réponses)")
+
+                            if len(comparison_stats) == 2:
+                                diff = abs(
+                                    comparison_stats.loc['Adultes', 'mean'] - comparison_stats.loc[
+                                        'Adolescents', 'mean'])
+                                if diff > 1:
+                                    st.write(
+                                        f"📊 **Différence notable** : {diff:.1f} points entre adolescents et adultes")
+                                else:
+                                    st.write("📊 **Différence faible** entre adolescents et adultes")
+
+                                # Déterminer qui est plus préoccupé
+                                if 'Adultes' in comparison_stats.index and 'Adolescents' in comparison_stats.index:
+                                    adult_mean = comparison_stats.loc['Adultes', 'mean']
+                                    teen_mean = comparison_stats.loc['Adolescents', 'mean']
+
+                                    if adult_mean > teen_mean:
+                                        st.write(
+                                            f"👨‍👩‍👧‍👦 Les **adultes** sont plus préoccupés que les **adolescents** ({adult_mean:.1f} vs {teen_mean:.1f})")
+                                    elif teen_mean > adult_mean:
+                                        st.write(
+                                            f"🧑‍🎓 Les **adolescents** sont plus préoccupés que les **adultes** ({teen_mean:.1f} vs {adult_mean:.1f})")
+                                    else:
+                                        st.write("⚖️ **Niveau de préoccupation similaire** entre les deux groupes")
+
+                    else:
+                        st.warning("Données insuffisantes pour la comparaison par groupe d'âge")
+                else:
+                    st.warning(f"Colonne de catégorie d'âge '{age_category_column}' non trouvée pour la comparaison")
+                    st.write("Colonnes disponibles :")
+                    st.write(
+                        [col for col in df.columns if
+                         'tu es' in col.lower() or 'âge' in col.lower() or 'age' in col.lower()])
+
+            else:
+                st.warning("Aucune réponse valide trouvée pour cette question")
+
+        else:
+            st.error(f"Colonne '{ai_concern_column}' non trouvée dans les données")
+            st.write("Colonnes disponibles contenant 'IA' ou similaire :")
+            ai_columns = [col for col in df.columns if
+                          'IA' in col.upper() or 'INTELLIGENCE' in col.upper() or 'PRÉOCCUP' in col.upper()]
+            if ai_columns:
+                st.write(ai_columns)
+            else:
+                st.write("Aucune colonne trouvée. Voici toutes les colonnes :")
+                st.write(df.columns.tolist())
+
+        # endregion
 
         if st.button("Terminer"):
             st.session_state.step = 1
