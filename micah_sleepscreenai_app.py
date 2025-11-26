@@ -1046,62 +1046,62 @@ with st.container():
             return fig
 
 
-        # # Fonction pour créer un graphique d'échelle numérique
-        # def create_numeric_scale_chart(data, question_col, title, participant_answer=None):
-        #     """
-        #     Crée un graphique en barres pour une échelle numérique (1-10)
-        #     """
-        #     # Compter les réponses
-        #     counts = data[question_col].value_counts().sort_index()
-        #
-        #     # S'assurer que toutes les valeurs de 1 à 10 sont présentes
-        #     all_values = pd.Series(0, index=range(1, 11))
-        #     for value, count in counts.items():
-        #         if 1 <= value <= 10:
-        #             all_values[value] = count
-        #
-        #     # Calculer les pourcentages
-        #     percentages = (all_values / len(data)) * 100
-        #
-        #     fig, ax = plt.subplots(figsize=(14, 8))
-        #
-        #     # Définir un gradient de couleurs du vert (peu préoccupé) au rouge (très préoccupé)
-        #     colors = plt.cm.RdYlGn_r(np.linspace(0.2, 0.8, 10))
-        #
-        #     # Créer les barres
-        #     bars = ax.bar(range(1, 11), percentages.values, color=colors, alpha=0.7,
-        #                   edgecolor='black', linewidth=1)
-        #
-        #     # Mettre en évidence la réponse du participant
-        #     if participant_answer is not None and 1 <= participant_answer <= 10:
-        #         bars[int(participant_answer) - 1].set_edgecolor('red')
-        #         bars[int(participant_answer) - 1].set_linewidth(4)
-        #         bars[int(participant_answer) - 1].set_alpha(1.0)
-        #
-        #     # Personnaliser le graphique
-        #     ax.set_xlabel('Niveau de préoccupation (1 = Pas du tout, 10 = Extrêmement)',
-        #                   fontsize=12, fontweight='bold')
-        #     ax.set_ylabel('Pourcentage des réponses (%)', fontsize=12, fontweight='bold')
-        #     ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
-        #     ax.set_xticks(range(1, 11))
-        #
-        #     # Ajouter les valeurs sur les barres
-        #     for i, (bar, count, pct) in enumerate(zip(bars, all_values.values, percentages.values)):
-        #         if count > 0:  # N'afficher que si il y a des réponses
-        #             ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.5,
-        #                     f'{count}\n({pct:.1f}%)',
-        #                     ha='center', va='bottom', fontweight='bold', fontsize=9)
-        #
-        #     # Améliorer l'apparence
-        #     ax.set_ylim(0, max(percentages.values) * 1.2 if max(percentages.values) > 0 else 10)
-        #     ax.grid(axis='y', alpha=0.3, linestyle='--')
-        #     ax.spines['top'].set_visible(False)
-        #     ax.spines['right'].set_visible(False)
-        #
-        #     plt.tight_layout()
-        #     return fig
-        #
-        #
+        # Fonction pour créer un graphique d'échelle numérique
+        def create_numeric_scale_chart(data, question_col, title, participant_answer=None):
+            """
+            Crée un graphique en barres pour une échelle numérique (1-10)
+            """
+            # Compter les réponses
+            counts = data[question_col].value_counts().sort_index()
+
+            # S'assurer que toutes les valeurs de 1 à 10 sont présentes
+            all_values = pd.Series(0, index=range(1, 11))
+            for value, count in counts.items():
+                if 1 <= value <= 10:
+                    all_values[value] = count
+
+            # Calculer les pourcentages
+            percentages = (all_values / len(data)) * 100
+
+            fig, ax = plt.subplots(figsize=(14, 8))
+
+            # Définir un gradient de couleurs du vert (peu préoccupé) au rouge (très préoccupé)
+            colors = plt.cm.RdYlGn_r(np.linspace(0.2, 0.8, 10))
+
+            # Créer les barres
+            bars = ax.bar(range(1, 11), percentages.values, color=colors, alpha=0.7,
+                          edgecolor='black', linewidth=1)
+
+            # Mettre en évidence la réponse du participant
+            if participant_answer is not None and 1 <= participant_answer <= 10:
+                bars[int(participant_answer) - 1].set_edgecolor('red')
+                bars[int(participant_answer) - 1].set_linewidth(4)
+                bars[int(participant_answer) - 1].set_alpha(1.0)
+
+            # Personnaliser le graphique
+            ax.set_xlabel('Niveau de préoccupation (1 = Pas du tout, 10 = Extrêmement)',
+                          fontsize=12, fontweight='bold')
+            ax.set_ylabel('Pourcentage des réponses (%)', fontsize=12, fontweight='bold')
+            ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+            ax.set_xticks(range(1, 11))
+
+            # Ajouter les valeurs sur les barres
+            for i, (bar, count, pct) in enumerate(zip(bars, all_values.values, percentages.values)):
+                if count > 0:  # N'afficher que si il y a des réponses
+                    ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.5,
+                            f'{count}\n({pct:.1f}%)',
+                            ha='center', va='bottom', fontweight='bold', fontsize=9)
+
+            # Améliorer l'apparence
+            ax.set_ylim(0, max(percentages.values) * 1.2 if max(percentages.values) > 0 else 10)
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+
+            plt.tight_layout()
+            return fig
+
+
         # # Fonction pour créer un graphique de comparaison par catégorie d'âge
         # def create_age_category_comparison_chart(data, question_col, category_col, title):
         #     """
