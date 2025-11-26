@@ -1166,62 +1166,62 @@ with st.container():
             return fig
 
 
-        # # Fonction pour créer comparaison de wordcloud graphique
-        # def create_wordcloud_comparison(data, text_col, category_col):
-        #     """
-        #     Crée des word clouds comparatifs pour adolescents et adultes
-        #     """
-        #
-        #     # Préparer les données
-        #     valid_data = data[(data[text_col].notna()) & (data[category_col].notna())].copy()
-        #     valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
-        #
-        #     # Séparer les réponses par groupe
-        #     adolescents_text = valid_data[valid_data['Groupe_Simple'] == 'Adolescents'][text_col]
-        #     adultes_text = valid_data[valid_data['Groupe_Simple'] == 'Adultes'][text_col]
-        #
-        #     if len(adolescents_text) == 0 and len(adultes_text) == 0:
-        #         return None, None
-        #
-        #     # Nettoyer et combiner le texte pour chaque groupe
-        #     def clean_and_combine_text(text_series):
-        #         if len(text_series) == 0:
-        #             return ""
-        #
-        #         # Combiner tous les textes
-        #         combined_text = ' '.join(text_series.astype(str))
-        #
-        #         # Nettoyer le texte (optionnel - vous pouvez ajuster selon vos besoins)
-        #         combined_text = re.sub(r'[^\w\s]', ' ', combined_text)  # Supprimer la ponctuation
-        #         combined_text = re.sub(r'\s+', ' ', combined_text)  # Normaliser les espaces
-        #
-        #         return combined_text.lower()
-        #
-        #     adolescents_combined = clean_and_combine_text(adolescents_text)
-        #     adultes_combined = clean_and_combine_text(adultes_text)
-        #
-        #     # Créer les word clouds
-        #     wordcloud_kwargs = {
-        #         'width': 800,
-        #         'height': 400,
-        #         'background_color': 'white',
-        #         'max_words': 100,
-        #         'relative_scaling': 0.5,
-        #         'min_font_size': 10
-        #     }
-        #
-        #     wc_adolescents = None
-        #     wc_adultes = None
-        #
-        #     if adolescents_combined.strip():
-        #         wc_adolescents = WordCloud(**wordcloud_kwargs, colormap='Oranges').generate(adolescents_combined)
-        #
-        #     if adultes_combined.strip():
-        #         wc_adultes = WordCloud(**wordcloud_kwargs, colormap='Blues').generate(adultes_combined)
-        #
-        #     return wc_adolescents, wc_adultes
-        #
-        #
+        # Fonction pour créer comparaison de wordcloud graphique
+        def create_wordcloud_comparison(data, text_col, category_col):
+            """
+            Crée des word clouds comparatifs pour adolescents et adultes
+            """
+
+            # Préparer les données
+            valid_data = data[(data[text_col].notna()) & (data[category_col].notna())].copy()
+            valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
+
+            # Séparer les réponses par groupe
+            adolescents_text = valid_data[valid_data['Groupe_Simple'] == 'Adolescents'][text_col]
+            adultes_text = valid_data[valid_data['Groupe_Simple'] == 'Adultes'][text_col]
+
+            if len(adolescents_text) == 0 and len(adultes_text) == 0:
+                return None, None
+
+            # Nettoyer et combiner le texte pour chaque groupe
+            def clean_and_combine_text(text_series):
+                if len(text_series) == 0:
+                    return ""
+
+                # Combiner tous les textes
+                combined_text = ' '.join(text_series.astype(str))
+
+                # Nettoyer le texte (optionnel - vous pouvez ajuster selon vos besoins)
+                combined_text = re.sub(r'[^\w\s]', ' ', combined_text)  # Supprimer la ponctuation
+                combined_text = re.sub(r'\s+', ' ', combined_text)  # Normaliser les espaces
+
+                return combined_text.lower()
+
+            adolescents_combined = clean_and_combine_text(adolescents_text)
+            adultes_combined = clean_and_combine_text(adultes_text)
+
+            # Créer les word clouds
+            wordcloud_kwargs = {
+                'width': 800,
+                'height': 400,
+                'background_color': 'white',
+                'max_words': 100,
+                'relative_scaling': 0.5,
+                'min_font_size': 10
+            }
+
+            wc_adolescents = None
+            wc_adultes = None
+
+            if adolescents_combined.strip():
+                wc_adolescents = WordCloud(**wordcloud_kwargs, colormap='Oranges').generate(adolescents_combined)
+
+            if adultes_combined.strip():
+                wc_adultes = WordCloud(**wordcloud_kwargs, colormap='Blues').generate(adultes_combined)
+
+            return wc_adolescents, wc_adultes
+
+
         # def plot_wordclouds(wc_adolescents, wc_adultes, adolescents_count, adultes_count):
         #     """
         #     Affiche les word clouds côte à côte
