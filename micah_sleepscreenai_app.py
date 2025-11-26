@@ -1701,7 +1701,126 @@ with st.container():
 
         # endregion
 
+        # region Graphique en donut des préférences de campagnes de prévention
+        st.subheader("🍩 Préférences pour les campagnes de prévention IA")
+        prevention_column = 'AI_Prevention_Campaign'
 
+        if prevention_column in df.columns and age_category_column in df.columns:
+            # Traiter les données
+            valid_responses = df[(df[prevention_column].notna()) & (df[age_category_column].notna())]
+
+            if len(valid_responses) > 0:
+                # Obtenir les comptes pour chaque groupe
+                adolescents_counts, adultes_counts = create_donut_comparison(df, prevention_column, age_category_column)
+
+                # Afficher les statistiques générales
+                total_adolescents = sum(adolescents_counts.values()) if adolescents_counts else 0
+                total_adultes = sum(adultes_counts.values()) if adultes_counts else 0
+
+                st.write("**📊 Statistiques des réponses :**")
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.metric("🧑‍🎓 Réponses Adolescents", total_adolescents)
+                with col2:
+                    st.metric("👨‍👩‍👧‍👦 Réponses Adultes", total_adultes)
+                with col3:
+                    st.metric("📝 Total", total_adolescents + total_adultes)
+
+                # Créer et afficher les graphiques
+                fig = plot_donut_charts(adolescents_counts, adultes_counts)
+                if fig is not None:
+                    st.pyplot(fig)
+
+                    # Ajouter la réponse du participant si disponible
+                    if valid_code and participant_data is not None:
+                        participant_response = participant_data[prevention_column]
+                        if pd.notna(participant_response):
+                            st.info(f"🎯 **Ta réponse :** {participant_response}")
+
+                    # Afficher les détails des réponses les plus populaires
+                    st.subheader("🏆 Réponses les plus populaires")
+
+                    col1, col2 = st.columns(2)
+
+                    with col1:
+                        if adolescents_counts:
+                            st.write("**🧑‍🎓 Top 3- Adolescents :**")
+                            for i, (answer, count) in enumerate(adolescents_counts.most_common(3), 1):
+                                percentage = (count / total_adolescents) * 100
+                                st.write(f"{i}. **{answer}** - {count} fois ({percentage:.1f}%)")
+
+                    with col2:
+                        if adultes_counts:
+                            st.write("**👨‍👩‍👧‍👦 Top 3 - Adultes :**")
+                            for i, (answer, count) in enumerate(adultes_counts.most_common(3), 1):
+                                percentage = (count / total_adultes) * 100
+                                st.write(f"{i}. **{answer}** - {count} fois ({percentage:.1f}%)")
+
+                    # Analyse comparative
+                    if adolescents_counts and adultes_counts:
+                        st.subheader("🔍 Analyse comparative")
+
+                        # Trouver les réponses communes
+                        common_answers = set(adolescents_counts.keys()) & set(adultes_counts.keys())
+                        if common_answers:
+                            st.write("**🤝 Réponses communes aux deux groupes :**")
+                            for answer in common_answers:
+                                ado_count = adolescents_counts[answer]
+                                adult_count = adultes_counts[answer]
+                                ado_pct = (ado_count / total_adolescents) * 100
+                                adult_pct = (adult_count / total_adultes) * 100
+
+                                if abs(ado_pct - adult_pct) < 5:
+                                    trend = "📊 Similaire"
+                                elif ado_pct > adult_pct:
+                                    trend = "🧑‍🎓 Plus populaire chez les ados"
+                                else:
+                                    trend = "👨‍👩‍👧‍👦 Plus populaire chez les adultes"
+
+                                st.write(f"- **{answer}** - {trend}")
+                                st.write(
+                                    f"  - Ados: {ado_count} ({ado_pct:.1f}%) | Adultes: {adult_count} ({adult_pct:.1f}%)")
+
+                        # Réponses uniques à chaque groupe
+                        ado_only = set(adolescents_counts.keys()) - set(adultes_counts.keys())
+                        adult_only = set(adultes_counts.keys()) - set(adolescents_counts.keys())
+
+                        if ado_only:
+                            st.write("**🧑‍🎓 Réponses spécifiques aux adolescents :**")
+                            for answer in ado_only:
+                                count = adolescents_counts[answer]
+                                pct = (count / total_adolescents) * 100
+                                st.write(f"- **{answer}** ({count} - {pct:.1f}%)")
+
+                        if adult_only:
+                            st.write("**👨‍👩‍👧‍👦 Réponses spécifiques aux adultes :**")
+                            for answer in adult_only:
+                                count = adultes_counts[answer]
+                                pct = (count / total_adultes) * 100
+                                st.write(f"- **{answer}** ({count} - {pct:.1f}%)")
+
+                else:
+                    st.warning("Impossible de créer les graphiques - données insuffisantes")
+
+            else:
+                st.warning("Aucune réponse valide trouvée pour cette question")
+
+        else:
+            st.error("Colonnes requises non trouvées :")
+            if prevention_column not in df.columns:
+                st.write(f"- Question sur les campagnes de prévention non trouvée")
+                # Chercher des colonnes similaires
+                similar_cols = [col for col in df.columns if
+                                'campagne' in col.lower() or 'prévention' in col.lower() or 'austère' in col.lower()]
+                if similar_cols:
+                    st.write("Colonnes similaires trouvées :")
+                    st.write(similar_cols)
+
+            if age_category_column not in df.columns:
+                st.write(f"- Colonne de catégorie d'âge '{age_category_column}' non trouvée")
+
+        # endregion
 
         if st.button("Terminer"):
             st.session_state.step = 1
