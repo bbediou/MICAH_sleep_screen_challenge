@@ -375,7 +375,7 @@ with st.container():
                 st.warning("Veuillez remplir tous les champs.")
 
         if st.button("Voir les résultats"):
-            st.session_state.step = 19
+            st.session_state.step = 20
             st.rerun()
         # if st.button("Commencer"):
         #     if code and role:
@@ -955,9 +955,9 @@ with st.container():
         #     st.rerun()
 
     # ==========================
-    # region STEP 19: See results
+    # region STEP 20: See results
     # ==========================
-    elif st.session_state.step == 19:
+    elif st.session_state.step == 20:
         st.title("Résumé de vos réponses")
         st.markdown("### Voici un aperçu de ce que vous avez répondu :")
         st.markdown("Cette page est en cours de construction. Elle arrive bientôt.")
@@ -1437,11 +1437,6 @@ with st.container():
         #     st.write(df.columns.tolist())
 
         # endregion
-
-
-
-
-
 
 
         if st.button("Terminer"):
