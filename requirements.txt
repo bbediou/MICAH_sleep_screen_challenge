@@ -11,4 +11,3 @@ wordcloud
 plotly
 st-gsheets-connection
 gspread
-collections
